@@ -1,9 +1,7 @@
-#include <Wire.h>
-
 #define ADDR_CMPS11 0x60
 #define REG_ANGLE_16 2
 
-static int cmp_offset = 0;
+int cmp_offset = 0;
 
 void InitCmp() {
   cmp_offset = ReadCmp();
@@ -18,6 +16,7 @@ int ReadCmp() {
   Wire.endTransmission();
 
   Wire.requestFrom(ADDR_CMPS11, 2);
+  while (Wire.available() < 2);
 
   high = Wire.read();
   low = Wire.read();
