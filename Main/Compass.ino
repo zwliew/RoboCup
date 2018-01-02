@@ -1,33 +1,25 @@
 #include <Wire.h>
 
-#define ADDRESS 0x60
-#define HI_REG 2
+#define ADDR_CMPS11 0x60
+#define REG_ANGLE_16 2
 
-int offset;
+static int cmp_offset = 0;
 
-void SetupCmp() {
-  offset = ReadCmp();
+void InitCmp() {
+  cmp_offset = ReadCmp();
 }
 
 int ReadCmp() {
-  Wire.beginTransmission(ADDRESS);
-  Wire.write(HI_REG);
-  Wire.endTransmission();
-  Wire.requestFrom(ADDRESS, 2);
+  byte high;
+  byte low;
 
-  char high;
-  char low;
+  Wire.beginTransmission(ADDR_CMPS11);
+  Wire.write(REG_ANGLE_16);
+  Wire.endTransmission();
+
+  Wire.requestFrom(ADDR_CMPS11, 2);
+
   high = Wire.read();
   low = Wire.read();
-
-  Serial.println(high);
-  Serial.println(low);
-
-  int angle16;
-  angle16 = high;
-  angle16 <<= 8;
-  angle16 += low;
-  angle16 /= 10;
-
-  return (angle16 - offset) % 360;
+  return (((high << 8) + low) / 10 - cmp_offset + 360) % 360;
 }
