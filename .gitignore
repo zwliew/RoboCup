@@ -1,2 +1,5 @@
 # Visual Studio Code project files
 .vscode
+
+# Generated files
+build
