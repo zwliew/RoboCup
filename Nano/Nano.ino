@@ -9,15 +9,13 @@ void setup() {
 
   Wire.begin();
 
-  InitGate();
+  InitCmp();
 
   Serial.println("Initialized.");
 }
 
 void loop() {
-  int gate = ReadGate();
-  Serial.print(" Gate: ");
-  Serial.print(gate);
-  Serial.print(" In: ");
-  Serial.println(IsBallInGate());
+  int bearing = ReadCmp();
+  Serial.print("Bearing: ");
+  Serial.print(bearing);
 }
