@@ -1,0 +1,3 @@
+[submodule "robocup-picam"]
+	path = robocup-picam
+	url = https://github.com/zwliew/robocup-picam
