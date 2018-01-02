@@ -4,12 +4,15 @@
 
 void setup() {
   Serial.begin(BAUD_RATE);
+
   Serial.println("Initializing.");
 
   Wire.begin();
 
   InitCmp();
   InitGate();
+
+  Serial.println("Initialized.");
 }
 
 void loop() {
