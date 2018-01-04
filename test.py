@@ -9,8 +9,8 @@ ap.add_argument('-v', '--video', help='path to the (optional) video file')
 ap.add_argument('-b', '--buffer', type=int, default=64, help='max buffer size')
 args = vars(ap.parse_args())
 
-orange_lower = (0, 160, 182)
-orange_upper = (30, 255, 255)
+orange_lower = (0, 104, 106)
+orange_upper = (35, 255, 255)
 pts = deque(maxlen=args['buffer'])
 
 if not args.get('video', False):
