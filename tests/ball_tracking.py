@@ -14,18 +14,18 @@ orange_upper = (35, 255, 255)
 pts = deque(maxlen=args['buffer'])
 
 if not args.get('video', False):
-    camera = cv2.VideoCapture(0)
+    camera = PiCamera()
+    camera.resolution = (640, 480)
+    camera.framerate = 32
+    rawCapture = PiRGBArray(camera, size=camera.resolution)
 else:
     camera = cv2.VideoCapture(args['video'])
 
-while True:
-    (grabbed, frame) = camera.read()
-
-    if args.get('video') and not grabbed:
-        break
+while frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+    image = frame.array
     
-    frame = imutils.resize(frame, width=600)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    image = imutils.resize(image, width=600)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, orange_lower, orange_upper)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, None)
@@ -42,8 +42,8 @@ while True:
         center = (int(M['m10'] / M['m00']), int(M['m01'] / M['m00']))
 
         if radius > 10:
-            cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
-            cv2.circle(frame, center, 5, (0, 0, 255), -1)
+            cv2.circle(image, (int(x), int(y)), int(radius), (0, 255, 255), 2)
+            cv2.circle(image, center, 5, (0, 0, 255), -1)
     
     pts.appendleft(center)
 
@@ -52,9 +52,9 @@ while True:
             continue
         
         thickness = int(numpy.sqrt(args['buffer'] / float(i + 1)) * 2.5)
-        cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+        cv2.line(image, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
-    cv2.imshow('Frame', frame)
+    cv2.imshow('Image', image)
     key = cv2.waitKey(1) & 0xFF
 
     if key == ord('q'):
