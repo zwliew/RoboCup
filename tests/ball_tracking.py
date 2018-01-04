@@ -1,4 +1,6 @@
 from collections import deque
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import argparse
 import imutils
 import cv2
@@ -21,7 +23,7 @@ if not args.get('video', False):
 else:
     camera = cv2.VideoCapture(args['video'])
 
-while frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
     image = frame.array
     
     image = imutils.resize(image, width=600)
@@ -55,6 +57,9 @@ while frame in camera.capture_continuous(rawCapture, format='bgr', use_video_por
         cv2.line(image, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
     cv2.imshow('Image', image)
+
+    rawCapture.truncate(0)
+
     key = cv2.waitKey(1) & 0xFF
 
     if key == ord('q'):
