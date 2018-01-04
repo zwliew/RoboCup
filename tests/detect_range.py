@@ -7,8 +7,11 @@
 # or
 # (python) range_detector --filter HSV --webcam
 
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import cv2
 import argparse
+import time
 from operator import xor
 
 
@@ -72,21 +75,22 @@ def main():
         else:
             frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     else:
-        camera = cv2.VideoCapture(0)
+        camera = PiCamera()
+        camera.resolution = (640, 480)
+        camera.framerate = 32
+        rawCapture = PiRGBArray(camera, size=camera.resolution)
+
+        time.sleep(0.1)
 
     setup_trackbars(range_filter)
 
-    while True:
-        if args['webcam']:
-            ret, image = camera.read()
+    for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+        image = frame.array
 
-            if not ret:
-                break
-
-            if range_filter == 'RGB':
-                frame_to_thresh = image.copy()
-            else:
-                frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        if range_filter == 'RGB':
+            frame_to_thresh = image.copy()
+        else:
+            frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         v1_min, v2_min, v3_min, v1_max, v2_max, v3_max = get_trackbar_values(range_filter)
 
@@ -101,6 +105,8 @@ def main():
         else:
             cv2.imshow("Original", image)
             cv2.imshow("Thresh", thresh)
+
+        rawCapture.truncate(0)
 
         if cv2.waitKey(1) & 0xFF is ord('q'):
             break
