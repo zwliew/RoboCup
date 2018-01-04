@@ -15,12 +15,14 @@ ap.add_argument("-n", "--num-frames", type=int, default=100,
 ap.add_argument("-d", "--display", type=int, default=-1,
 	help="Whether or not frames should be displayed")
 args = vars(ap.parse_args())
- 
+
+resolution = (1280, 720)
+
 # initialize the camera and stream
 camera = PiCamera()
-camera.resolution = (320, 240)
+camera.resolution = resolution
 camera.framerate = 32
-rawCapture = PiRGBArray(camera, size=(320, 240))
+rawCapture = PiRGBArray(camera, size=camera.resolution)
 stream = camera.capture_continuous(rawCapture, format="bgr",
 	use_video_port=True)
 
@@ -64,7 +66,7 @@ camera.close()
 # created a *threaded *video stream, allow the camera sensor to warmup,
 # and start the FPS counter
 print("[INFO] sampling THREADED frames from `picamera` module...")
-vs = PiVideoStream().start()
+vs = PiVideoStream(resolution).start()
 time.sleep(2.0)
 fps = FPS().start()
  
