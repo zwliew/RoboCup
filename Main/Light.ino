@@ -21,6 +21,7 @@
 #define LI_ARR_L 4
 #define LI_ARR_R 7
 #define LI_ARR_B 10
+#define LI_ARR_END 13
 
 #define LI_THRES 50
 
@@ -50,4 +51,29 @@ void ReadLight() {
   li_readings[LI_ARR_B] = analogRead(LI_BB);
   li_readings[LI_ARR_B + 1] = analogRead(LI_BM);
   li_readings[LI_ARR_B + 2] = analogRead(LI_BF);
+}
+
+bool IsSideOut(int side_start, int side_end) {
+  for (int i = side_start; i < side_end; i++) {
+    if (li_readings[i] > LI_THRES) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool IsFrontOut() {
+  return IsSideOut(LI_ARR_F, LI_ARR_L);
+}
+
+bool IsLeftOut() {
+  return IsSideOut(LI_ARR_L, LI_ARR_R);
+}
+
+bool IsRightOut() {
+  return IsSideOut(LI_ARR_R, LI_ARR_B);
+}
+
+bool IsBackOut() {
+  return IsSideOut(LI_ARR_B, LI_ARR_END);
 }

@@ -1,7 +1,6 @@
 #define GT A15
 
-#define THRES_IN 20
-#define THRES_OUT 100
+#define GT_THRES_IN 20
 
 int gt_reading;
 
@@ -15,5 +14,5 @@ int ReadGate() {
 }
 
 bool IsBallInGate() {
-  return gt_reading < THRES_IN;
+  return gt_reading < GT_THRES_IN;
 }
