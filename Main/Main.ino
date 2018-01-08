@@ -17,4 +17,9 @@ void setup() {
 }
 
 void loop() {
+  if (IsAnyOut()) {
+    Move(0, 0);
+  } else {
+    Move(DEBUG_SPD, 0);
+  }
 }

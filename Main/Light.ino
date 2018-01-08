@@ -77,3 +77,10 @@ bool IsRightOut() {
 bool IsBackOut() {
   return IsSideOut(LI_ARR_B, LI_ARR_END);
 }
+
+bool IsAnyOut() {
+  return IsFrontOut() ||
+      IsLeftOut() ||
+      IsRightOut() ||
+      IsBackOut();
+}
