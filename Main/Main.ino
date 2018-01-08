@@ -10,14 +10,11 @@ void setup() {
   Wire.begin();
 
   InitGate();
+  InitLoc();
+  InitLight();
 
   Serial.println("Initialized.");
 }
 
 void loop() {
-  int gate = ReadGate();
-  Serial.print(" Gate: ");
-  Serial.print(gate);
-  Serial.print(" In: ");
-  Serial.println(IsBallInGate());
 }

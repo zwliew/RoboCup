@@ -1,5 +1,5 @@
 #define LI_FLF A6
-#define LI_FLB A7
+#define LI_FLB A13
 
 #define LI_FRF A8
 #define LI_FRB A9
@@ -21,6 +21,8 @@
 #define LI_ARR_L 4
 #define LI_ARR_R 7
 #define LI_ARR_B 10
+
+#define LI_THRES 50
 
 int li_readings[13];
 
