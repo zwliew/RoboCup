@@ -3,6 +3,7 @@ from picamera import PiCamera
 from threading import Thread
 import cv2
 import time
+import imutils
 
 # Orange ball HSV values
 LOWER = (0, 104, 106)
@@ -15,6 +16,7 @@ class PiVideoStream:
         self.camera.sensor_mode = sensor_mode
         self.camera.resolution = resolution
         self.camera.framerate = framerate
+        self.camera.brightness = 80
         self.rawCapture = PiRGBArray(self.camera, size=resolution)
         self.stream = self.camera.capture_continuous(self.rawCapture,
         format="bgr", use_video_port=True)
@@ -38,10 +40,10 @@ class PiVideoStream:
             # preparation for the next frame
             frame = f.array
 
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            frame = cv2.inRange(frame, LOWER, UPPER)
-            frame = cv2.morphologyEx(frame, cv2.MORPH_OPEN, None)
-            frame = cv2.morphologyEx(frame, cv2.MORPH_CLOSE, None)
+#            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+#            frame = cv2.inRange(frame, LOWER, UPPER)
+#            frame = cv2.morphologyEx(frame, cv2.MORPH_OPEN, None)
+#            frame = cv2.morphologyEx(frame, cv2.MORPH_CLOSE, None)
 
             self.frame = frame
 
@@ -72,11 +74,15 @@ time.sleep(2)
 
 while True:
     frame = stream.read()
-
+    frame = imutils.resize(frame, width=400)
+    cv2.imshow('frame', frame)
+    cv2.waitKey(1)
+"""
     cnts = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)[-2]
     if len(cnts) > 0:
         c = max(cnts, key=cv2.contourArea)
         ((x, y), radius) = cv2.minEnclosingCircle(c)
+"""
 
 stream.stop()
