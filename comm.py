@@ -11,7 +11,9 @@ s = serial.Serial(
 )
 
 while True:
-    s.write('hi')
+    x = 500
+    y = 300
+    s.write(x + ":" + y + ";")
     time.sleep(1)
 
 s.close()
