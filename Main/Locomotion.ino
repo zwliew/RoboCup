@@ -12,13 +12,13 @@
 #define DIR_BR 49
 #define SPD_BR 11
 
-#define DEBUG_SPD 0.2
-
 void InitLoc() {
   pinMode(DIR_FL, OUTPUT);
   pinMode(DIR_FR, OUTPUT);
   pinMode(DIR_BL, OUTPUT);
   pinMode(DIR_BR, OUTPUT);
+
+  Serial.println("Initialized locomotion.");
 }
 
 // spd: 0f - 1f

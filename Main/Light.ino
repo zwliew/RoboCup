@@ -31,6 +31,7 @@ void InitLight() {
   for (int i = 0; i < 13; i++) {
     li_readings[i] = 0;
   }
+  Serial.println("Initialized lights.");
 }
 
 void ReadLight() {
@@ -51,6 +52,21 @@ void ReadLight() {
   li_readings[LI_ARR_B] = analogRead(LI_BB);
   li_readings[LI_ARR_B + 1] = analogRead(LI_BM);
   li_readings[LI_ARR_B + 2] = analogRead(LI_BF);
+
+#ifdef DEBUG_LIGHT
+  Serial.println("FLF FLB FRF FRB  LL  LM  LR  RR  RM  RL  BB  BM  BF");
+  for (int i = 0; i < sizeof(li_readings) / sizeof(*li_readings); i++) {
+    if (li_readings[i] >= 100) {
+    } else if (li_readings[i] >= 10) {
+      Serial.print(" ");
+    } else {
+      Serial.print("  ");
+    }
+    Serial.print(li_readings[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
+#endif
 }
 
 bool IsSideOut(int side_start, int side_end) {

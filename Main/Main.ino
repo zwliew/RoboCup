@@ -5,7 +5,7 @@
 void setup() {
   Serial.begin(BAUD_RATE);
 
-  Serial.println("Initializing.");
+  Serial.println("Setting up.");
 
   Wire.begin();
 
@@ -13,13 +13,9 @@ void setup() {
   InitLoc();
   InitLight();
 
-  Serial.println("Initialized.");
+  Serial.println("Setup complete.");
 }
 
 void loop() {
-  if (IsAnyOut()) {
-    Move(0, 0);
-  } else {
-    Move(DEBUG_SPD, 0);
-  }
+  ReadLight();
 }
