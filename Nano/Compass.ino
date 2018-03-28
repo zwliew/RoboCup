@@ -5,6 +5,8 @@ int cmp_offset = 0;
 
 void InitCmp() {
   cmp_offset = ReadCmp();
+
+  Serial.println("Initialized compass.");
 }
 
 int ReadCmp() {

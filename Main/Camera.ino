@@ -2,7 +2,7 @@ int cam_x;
 int cam_y;
 
 void InitCamera() {
-  Serial3.begin(9600);
+  Serial3.begin(BAUD_RATE);
 }
 
 void ReadCoordinates() {

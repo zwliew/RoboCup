@@ -5,17 +5,20 @@
 void setup() {
   Serial.begin(BAUD_RATE);
 
-  Serial.println("Initializing.");
+  Serial.println("Setting up Nano.");
 
   Wire.begin();
 
-  InitCmp();
+  // TODO: Uncomment this
+  //InitCmp();
+  InitUS();
 
-  Serial.println("Initialized.");
+  Serial.println("Nano setup complete.");
 }
 
 void loop() {
-  int bearing = ReadCmp();
-  Serial.print("Bearing: ");
-  Serial.print(bearing);
+  Serial.print("Left: ");
+  Serial.print(ReadLeftUS());
+  Serial.print(" Right: ");
+  Serial.println(ReadRightUS());
 }
