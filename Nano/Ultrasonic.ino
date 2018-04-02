@@ -1,8 +1,14 @@
+#ifdef IS_STRIKER
 #define TRIG_L 12
 #define ECHO_L 11
-
 #define TRIG_R 8
 #define ECHO_R 9
+#else
+#define TRIG_L 7
+#define ECHO_L 6
+#define TRIG_R 4
+#define ECHO_R 3
+#endif
 
 void InitUS() {
   pinMode(TRIG_L, OUTPUT);

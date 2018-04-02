@@ -2,15 +2,22 @@
 
 #define BAUD_RATE 9600
 
+// Flags to enable/disable manually
+#define IS_STRIKER
+
 void setup() {
   Serial.begin(BAUD_RATE);
 
-  Serial.println("Setting up Nano.");
+  Serial.print("Setting up Nano for the ");
+#ifdef IS_STRIKER
+  Serial.println("striker.");
+#else
+  Serial.println("goalkeeper.");
+#endif
 
   Wire.begin();
 
-  // TODO: Uncomment this
-  //InitCmp();
+  InitCmp();
   InitUS();
 
   Serial.println("Nano setup complete.");
