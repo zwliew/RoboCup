@@ -1,5 +1,6 @@
 // LOW = anti-clockwise
 // HIGH = clockwise
+#ifdef IS_STRIKER
 #define DIR_FL 47
 #define SPD_FL 10
 
@@ -11,6 +12,19 @@
 
 #define DIR_BR 49
 #define SPD_BR 11
+#else
+#define DIR_FL 51
+#define SPD_FL 11
+
+#define DIR_FR 49
+#define SPD_FR 10
+
+#define DIR_BL 47
+#define SPD_BL 12
+
+#define DIR_BR 45
+#define SPD_BR 13
+#endif
 
 void InitLoc() {
   pinMode(DIR_FL, OUTPUT);
@@ -23,15 +37,15 @@ void InitLoc() {
 
 // spd: 0f - 1f
 // clockwise: clockwise if true
-void Turn(float spd, bool clockwise) {
+void Spin(float spd, bool clockwise) {
   if (clockwise) {
-    digitalWrite(DIR_FL, HIGH);
-    digitalWrite(DIR_BL, HIGH);
+    digitalWrite(DIR_FL, LOW);
+    digitalWrite(DIR_BL, LOW);
     digitalWrite(DIR_FR, LOW);
     digitalWrite(DIR_BR, LOW);
   } else {
-    digitalWrite(DIR_FL, LOW);
-    digitalWrite(DIR_BL, LOW);
+    digitalWrite(DIR_FL, HIGH);
+    digitalWrite(DIR_BL, HIGH);
     digitalWrite(DIR_FR, HIGH);
     digitalWrite(DIR_BR, HIGH);
   }
@@ -45,7 +59,7 @@ void Turn(float spd, bool clockwise) {
 // dir: 0 - 360 degrees
 void Move(float spd, float dir) {
   // Calculate speeds
-  float dir_rad = dir / 180 * 3.141592;
+  float dir_rad = dir / 180 * 3.14159265;
   float tmp[] = { cos(dir_rad), sin(dir_rad) };
   float y = (tmp[0] - tmp[1]) * spd;
   float x = (tmp[0] + tmp[1]) * spd;
@@ -66,6 +80,10 @@ void Move(float spd, float dir) {
     digitalWrite(DIR_FR, LOW);
     digitalWrite(DIR_BL, HIGH);
   }
+
+  Serial.print(x);
+  Serial.print(" ");
+  Serial.println(y);
 
   // Configure speeds
   int right = abs(x) * 255;

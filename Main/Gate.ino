@@ -6,6 +6,8 @@ int gt_reading;
 
 void InitGate() {
   gt_reading = 0;
+
+  Serial.println("Initialized gate.");
 }
 
 int ReadGate() {

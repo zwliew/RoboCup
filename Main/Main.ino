@@ -3,8 +3,10 @@
 #define BAUD_RATE 9600
 
 // Flags to enable/disable manually
-//#define DEBUG_LIGHT
-#define IS_STRIKER
+#define DEBUG_LIGHT
+//#define DEBUG_COMPASS
+
+//#define IS_STRIKER
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -22,9 +24,27 @@ void setup() {
   InitLoc();
   InitLight();
   InitSld();
+  InitCmp();
 
   Serial.println("Main Setup complete.");
 }
 
 void loop() {
+  ReadLight();
+
+#ifdef IS_STRIKER
+  strikerLoop();
+#else
+  goalieLoop();
+#endif
 }
+
+#ifdef IS_STRIKER
+void strikerLoop() {
+
+}
+#else
+void goalieLoop() {
+  
+}
+#endif

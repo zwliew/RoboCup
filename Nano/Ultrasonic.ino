@@ -6,7 +6,7 @@
 #else
 #define TRIG_L 7
 #define ECHO_L 6
-#define TRIG_R 4
+#define TRIG_R 2
 #define ECHO_R 3
 #endif
 
@@ -47,7 +47,7 @@ int ReadRightUS() {
  * value is in centimeters.
  * 
  * The field should be 182cm in width. Since the bot is 20cm in diameter,
- * the balance reading should be 61cm on both sides.
+ * the balance reading should be 81cm on both sides.
  */
 int DistFromCenter() {
   int left = ReadLeftUS();

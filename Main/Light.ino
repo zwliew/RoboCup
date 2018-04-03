@@ -23,7 +23,11 @@
 #define LI_ARR_B 10
 #define LI_ARR_END 13
 
+#ifdef IS_STRIKER
 #define LI_THRES 50
+#else
+#define LI_THRES 160
+#endif
 
 int li_readings[13];
 

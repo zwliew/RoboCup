@@ -3,7 +3,7 @@
 #define BAUD_RATE 9600
 
 // Flags to enable/disable manually
-#define IS_STRIKER
+//#define IS_STRIKER
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -17,7 +17,6 @@ void setup() {
 
   Wire.begin();
 
-  InitCmp();
   InitUS();
 
   Serial.println("Nano setup complete.");
