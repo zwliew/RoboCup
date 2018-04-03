@@ -14,10 +14,10 @@
 #define SPD_BR 11
 #else
 #define DIR_FL 51
-#define SPD_FL 11
+#define SPD_FL 10
 
 #define DIR_FR 49
-#define SPD_FR 10
+#define SPD_FR 11
 
 #define DIR_BL 47
 #define SPD_BL 12
@@ -84,8 +84,60 @@ void Move(float spd, float dir) {
   // Configure speeds
   int right = abs(x) * 255;
   int left = abs(y) * 255;
-  analogWrite(SPD_FL, right);
-  analogWrite(SPD_BR, right);
-  analogWrite(SPD_FR, left);
-  analogWrite(SPD_BL, left);
+
+  int fl, br, fr, bl;
+  fl = br = right;
+  fr = bl = left;
+
+  int compass = ReadCmp();
+  int OFFSET = 80 * (compass > 180 ? 360 - compass : compass) / 180;
+  if (compass > 5 && compass < 180) {
+    // anti-clockwise
+    if (x > 0) {
+      br += OFFSET;
+      fl -= OFFSET;
+    } else {
+      br -= OFFSET;
+      fl += OFFSET;
+    }
+
+    if (y > 0) {
+      fr += OFFSET;
+      bl -= OFFSET;
+    } else {
+      fr -= OFFSET;
+      bl += OFFSET;
+    }
+  } else if (compass < 355 && compass > 179) {
+    // clockwise
+    if (x > 0) {
+      br -= OFFSET;
+      fl += OFFSET;
+    } else {
+      br += OFFSET;
+      fl -= OFFSET;
+    }
+
+    if (y > 0) {
+      fr -= OFFSET;
+      bl += OFFSET;
+    } else {
+      fr += OFFSET;
+      bl -= OFFSET;
+    }
+  }
+
+  Serial.print(" fl: ");
+  Serial.print(fl);
+  Serial.print(" fr: ");
+  Serial.print(fr);
+  Serial.print(" br: ");
+  Serial.print(br);
+  Serial.print(" bl: ");
+  Serial.println(bl);
+
+  analogWrite(SPD_FL, fl);
+  analogWrite(SPD_BR, br);
+  analogWrite(SPD_FR, fr);
+  analogWrite(SPD_BL, bl);
 }
