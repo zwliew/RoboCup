@@ -72,12 +72,16 @@ void Move(float spd, float dir) {
   fl = br = abs(fracSpds[0]) * 255;
   fr = bl = abs(fracSpds[1]) * 255;
   int compass = ReadCmp();
-  int error = compass > 180 ? 360 - compass : compass;
-  float p_gain = 128 / 180;
-  float i_gain = 0.01;
+  int error1 = compass > 180 ? 360 - compass : compass;
+  float P_GAIN = 0.8;
+/*
+  TODO: try again
+  int error2 = compass > 180 ? -(360 - compass) : compass;
+  float i_gain = 0.0001;
   static float i_mem = 0;
-  i_mem += i_gain * error;
-  int offset = p_gain * error;
+  i_mem += i_gain * error2;
+*/
+  int offset = P_GAIN * error1;
   if (compass > 5 && compass < 180) {
     br += offset;
     fl -= offset;
@@ -96,6 +100,7 @@ void Move(float spd, float dir) {
   digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
   digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
 
+#ifdef DEBUG_LOCOMOTION
   Serial.print(" fl: ");
   Serial.print(fl);
   Serial.print(fl > 0 ? "low" : "high");
@@ -108,6 +113,7 @@ void Move(float spd, float dir) {
   Serial.print(" bl: ");
   Serial.print(bl);
   Serial.println(bl > 0 ? "low" : "high");
+#endif
 
   analogWrite(SPD_FL, abs(fl));
   analogWrite(SPD_BR, abs(br));
