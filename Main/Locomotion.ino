@@ -61,8 +61,8 @@ void Move(float spd, float dir) {
   // Calculate speeds
   float dir_rad = dir / 180 * 3.14159265;
   float tmp[] = { cos(dir_rad), sin(dir_rad) };
-  float y = (tmp[0] - tmp[1]) * spd;
-  float x = (tmp[0] + tmp[1]) * spd;
+  float y = (tmp[0] - tmp[1]) * spd / 1.41421356;
+  float x = (tmp[0] + tmp[1]) * spd / 1.41421356;
 
   // Configure directions
   if (x > 0) {
@@ -80,10 +80,6 @@ void Move(float spd, float dir) {
     digitalWrite(DIR_FR, LOW);
     digitalWrite(DIR_BL, HIGH);
   }
-
-  Serial.print(x);
-  Serial.print(" ");
-  Serial.println(y);
 
   // Configure speeds
   int right = abs(x) * 255;
