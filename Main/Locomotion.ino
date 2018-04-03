@@ -58,86 +58,59 @@ void Spin(float spd, bool clockwise) {
 // spd: 0f - 1f
 // dir: 0 - 360 degrees
 void Move(float spd, float dir) {
-  // Calculate speeds
   float dir_rad = dir / 180 * 3.14159265;
   float tmp[] = { cos(dir_rad), sin(dir_rad) };
-  float y = (tmp[0] - tmp[1]) * spd / 1.41421356;
-  float x = (tmp[0] + tmp[1]) * spd / 1.41421356;
 
-  // Configure directions
-  if (x > 0) {
-    digitalWrite(DIR_FL, LOW);
-    digitalWrite(DIR_BR, HIGH);
-  } else if (x < 0) {
-    digitalWrite(DIR_FL, HIGH);
-    digitalWrite(DIR_BR, LOW);
-  }
+  // Speeds
+  float fracSpds[] = {
+    (tmp[0] + tmp[1]) * spd / 1.41421356,
+    (tmp[0] - tmp[1]) * spd / 1.41421356
+  };
 
-  if (y > 0) {
-    digitalWrite(DIR_FR, HIGH);
-    digitalWrite(DIR_BL, LOW);
-  } else if (y < 0) {
-    digitalWrite(DIR_FR, LOW);
-    digitalWrite(DIR_BL, HIGH);
-  }
-
-  // Configure speeds
-  int right = abs(x) * 255;
-  int left = abs(y) * 255;
-
+  // Rotation
   int fl, br, fr, bl;
-  fl = br = right;
-  fr = bl = left;
-
+  fl = br = abs(fracSpds[0]) * 255;
+  fr = bl = abs(fracSpds[1]) * 255;
   int compass = ReadCmp();
-  int OFFSET = 80 * (compass > 180 ? 360 - compass : compass) / 180;
+  int error = compass > 180 ? 360 - compass : compass;
+  float p_gain = 128 / 180;
+  float i_gain = 0.01;
+  static float i_mem = 0;
+  i_mem += i_gain * error;
+  int offset = p_gain * error;
   if (compass > 5 && compass < 180) {
-    // anti-clockwise
-    if (x > 0) {
-      br += OFFSET;
-      fl -= OFFSET;
-    } else {
-      br -= OFFSET;
-      fl += OFFSET;
-    }
-
-    if (y > 0) {
-      fr += OFFSET;
-      bl -= OFFSET;
-    } else {
-      fr -= OFFSET;
-      bl += OFFSET;
-    }
+    br += offset;
+    fl -= offset;
+    bl -= offset;
+    fr += offset;
   } else if (compass < 355 && compass > 179) {
-    // clockwise
-    if (x > 0) {
-      br -= OFFSET;
-      fl += OFFSET;
-    } else {
-      br += OFFSET;
-      fl -= OFFSET;
-    }
-
-    if (y > 0) {
-      fr -= OFFSET;
-      bl += OFFSET;
-    } else {
-      fr += OFFSET;
-      bl -= OFFSET;
-    }
+    br -= offset;
+    fl += offset;
+    fr -= offset;
+    bl += offset;
   }
+
+  // Directions
+  digitalWrite(DIR_FL, fl > 0 ? LOW : HIGH);
+  digitalWrite(DIR_BR, br > 0 ? HIGH : LOW);
+  digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
+  digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
 
   Serial.print(" fl: ");
   Serial.print(fl);
+  Serial.print(fl > 0 ? "low" : "high");
   Serial.print(" fr: ");
   Serial.print(fr);
+  Serial.print(fr <= 0? "low" : "high");
   Serial.print(" br: ");
   Serial.print(br);
+  Serial.print(br <= 0 ? "low" : "high");
   Serial.print(" bl: ");
-  Serial.println(bl);
+  Serial.print(bl);
+  Serial.println(bl > 0 ? "low" : "high");
 
-  analogWrite(SPD_FL, fl);
-  analogWrite(SPD_BR, br);
-  analogWrite(SPD_FR, fr);
-  analogWrite(SPD_BL, bl);
+  analogWrite(SPD_FL, abs(fl));
+  analogWrite(SPD_BR, abs(br));
+  analogWrite(SPD_FR, abs(fr));
+  analogWrite(SPD_BL, abs(bl));
 }
