@@ -19,7 +19,6 @@ int ReadCmp() {
   Wire.endTransmission();
 
   Wire.requestFrom(ADDR_CMPS11, 2);
-  while (Wire.available() < 2);
 
   high = Wire.read();
   low = Wire.read();
