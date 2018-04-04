@@ -8,6 +8,8 @@
 #define ECHO_L 6
 #define TRIG_R 2
 #define ECHO_R 3
+#define TRIG_B 8
+#define ECHO_B 9
 #endif
 
 void InitUS() {
@@ -15,8 +17,6 @@ void InitUS() {
   pinMode(TRIG_R, OUTPUT);
   pinMode(ECHO_L, INPUT);
   pinMode(ECHO_R, INPUT);
-
-  Serial.println("Initialized ultrasonic.");
 }
 
 int ReadLeftUS() {
@@ -27,7 +27,11 @@ int ReadLeftUS() {
   delayMicroseconds(10);
   digitalWrite(TRIG_L, LOW);
 
-  return pulseIn(ECHO_L, HIGH) * 0.034 / 2;
+  const int reading = pulseIn(ECHO_L, HIGH) * 0.034 / 2;
+#ifdef DEBUG_US
+  Serial.println("Left: " + ((String) reading));
+#endif
+  return reading;
 }
 
 int ReadRightUS() {
@@ -38,7 +42,11 @@ int ReadRightUS() {
   delayMicroseconds(10);
   digitalWrite(TRIG_R, LOW);
 
-  return pulseIn(ECHO_R, HIGH) * 0.034 / 2;
+  const int reading = pulseIn(ECHO_R, HIGH) * 0.034 / 2;
+#ifdef DEBUG_US
+  Serial.println("Right: " + ((String) reading));
+#endif
+  return reading;
 }
 
 /**
@@ -49,7 +57,7 @@ int ReadRightUS() {
  * The field should be 182cm in width. Since the bot is 20cm in diameter,
  * the balance reading should be 81cm on both sides.
  */
-int DistFromCenter() {
+int CalcDistFromCenter() {
   int left = ReadLeftUS();
   int right = ReadRightUS();
 

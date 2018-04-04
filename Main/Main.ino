@@ -6,6 +6,7 @@
 //#define DEBUG_LIGHT
 //#define DEBUG_COMPASS
 //#define DEBUG_LOCOMOTION
+#define DEBUG_US
 
 //#define IS_STRIKER
 
@@ -26,12 +27,14 @@ void setup() {
   InitLight();
   InitSld();
   InitCmp();
+  InitUS();
 
   Serial.println("Main Setup complete.");
 }
 
 void loop() {
-  Move(0.7, 225);
+  ReadLight();
+  ReadPosition();
 
 #ifdef IS_STRIKER
   strikerLoop();
