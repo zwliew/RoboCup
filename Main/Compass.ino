@@ -1,4 +1,4 @@
-  #define ADDR_CMPS11 0x60
+#define ADDR_CMPS11 0x60
 #define REG_ANGLE_16 2
 
 int cmp_offset = 0;

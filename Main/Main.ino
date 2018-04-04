@@ -3,8 +3,9 @@
 #define BAUD_RATE 9600
 
 // Flags to enable/disable manually
-#define DEBUG_LIGHT
+//#define DEBUG_LIGHT
 //#define DEBUG_COMPASS
+//#define DEBUG_LOCOMOTION
 
 //#define IS_STRIKER
 
@@ -30,7 +31,7 @@ void setup() {
 }
 
 void loop() {
-  Move(0.8, 0);
+  Move(0.7, 315);
 
 #ifdef IS_STRIKER
   strikerLoop();

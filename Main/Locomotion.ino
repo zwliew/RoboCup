@@ -26,6 +26,18 @@
 #define SPD_BR 13
 #endif
 
+// Math constants
+#define SQRT_2 1.41421356237
+#define PI 3.14159265359
+#define MAX_SPD 255
+#define PI_TO_DEG 180
+
+// Tuning
+#define P_GAIN 0.8
+#define CMP_BACK_DEG 160
+#define CMP_TOL_DEG 5
+#define MAX_OFFSET 100
+
 void InitLoc() {
   pinMode(DIR_FL, OUTPUT);
   pinMode(DIR_FR, OUTPUT);
@@ -58,36 +70,24 @@ void Spin(float spd, bool clockwise) {
 // spd: 0f - 1f
 // dir: 0 - 360 degrees
 void Move(float spd, float dir) {
-  float dir_rad = dir / 180 * 3.14159265;
-  float tmp[] = { cos(dir_rad), sin(dir_rad) };
+  const float dir_rad = dir / PI_TO_DEG * PI;
+  const float cosine = cos(dir_rad);
+  const float sine = sin(dir_rad);
+  const float fl_br_frac = (cosine + sine) * spd / SQRT_2;
+  const float fr_bl_frac = (cosine - sine) * spd / SQRT_2;
 
-  // Speeds
-  float fracSpds[] = {
-    (tmp[0] + tmp[1]) * spd / 1.41421356,
-    (tmp[0] - tmp[1]) * spd / 1.41421356
-  };
-
-  // Rotation
-  int fl, br, fr, bl;
-  fl = br = abs(fracSpds[0]) * 255;
-  fr = bl = abs(fracSpds[1]) * 255;
-  int compass = ReadCmp();
-  int error1 = compass > 180 ? 360 - compass : compass;
-  float P_GAIN = 0.8;
-/*
-  TODO: try again
-  int error2 = compass > 180 ? -(360 - compass) : compass;
-  float i_gain = 0.0001;
-  static float i_mem = 0;
-  i_mem += i_gain * error2;
-*/
-  int offset = P_GAIN * error1;
-  if (compass > 5 && compass < 180) {
+  // Rotate to correct to 0 deg bearing
+  int fl, br = fl_br_frac * MAX_SPD;
+  int fr, bl = fr_bl_frac * MAX_SPD;
+  const int compass = ReadCmp();
+  const int error = compass > CMP_TOL_DEG ? 360 - compass : compass;
+  const int offset = min(MAX_OFFSET, P_GAIN * error);
+  if (compass > CMP_TOL_DEG && compass <= CMP_BACK_DEG) {
     br += offset;
     fl -= offset;
     bl -= offset;
     fr += offset;
-  } else if (compass < 355 && compass > 179) {
+  } else if (compass < 360 - CMP_TOL_DEG && compass > CMP_BACK_DEG) {
     br -= offset;
     fl += offset;
     fr -= offset;
@@ -101,22 +101,19 @@ void Move(float spd, float dir) {
   digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
 
 #ifdef DEBUG_LOCOMOTION
-  Serial.print(" fl: ");
-  Serial.print(fl);
-  Serial.print(fl > 0 ? "low" : "high");
-  Serial.print(" fr: ");
-  Serial.print(fr);
-  Serial.print(fr <= 0? "low" : "high");
-  Serial.print(" br: ");
-  Serial.print(br);
-  Serial.print(br <= 0 ? "low" : "high");
-  Serial.print(" bl: ");
-  Serial.print(bl);
-  Serial.println(bl > 0 ? "low" : "high");
+  Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " low" : " high"));
+  Serial.print(" fr: " + ((String) fr) + (fr <= 0 ? " low" : " high"));
+  Serial.print(" br: " + ((String) br) + (br <= 0 ? " low" : " high"));
+  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " low" : " high"));
 #endif
 
-  analogWrite(SPD_FL, abs(fl));
-  analogWrite(SPD_BR, abs(br));
-  analogWrite(SPD_FR, abs(fr));
-  analogWrite(SPD_BL, abs(bl));
+  fl = min(MAX_SPD, abs(fl));
+  br = min(MAX_SPD, abs(br));
+  fr = min(MAX_SPD, abs(fr));
+  bl = min(MAX_SPD, abs(bl));
+
+  analogWrite(SPD_FL, fr);
+  analogWrite(SPD_BR, br);
+  analogWrite(SPD_FR, fr);
+  analogWrite(SPD_BL, bl);
 }
