@@ -31,7 +31,7 @@ void setup() {
 }
 
 void loop() {
-  Move(0.7, 315);
+  Move(0.7, 225);
 
 #ifdef IS_STRIKER
   strikerLoop();

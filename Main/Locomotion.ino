@@ -28,7 +28,6 @@
 
 // Math constants
 #define SQRT_2 1.41421356237
-#define PI 3.14159265359
 #define MAX_SPD 255
 #define PI_TO_DEG 180
 
@@ -77,10 +76,11 @@ void Move(float spd, float dir) {
   const float fr_bl_frac = (cosine - sine) * spd / SQRT_2;
 
   // Rotate to correct to 0 deg bearing
-  int fl, br = fl_br_frac * MAX_SPD;
-  int fr, bl = fr_bl_frac * MAX_SPD;
+  int fl, fr, br, bl;
+  fl = br = fl_br_frac * MAX_SPD;
+  fr = bl = fr_bl_frac * MAX_SPD;
   const int compass = ReadCmp();
-  const int error = compass > CMP_TOL_DEG ? 360 - compass : compass;
+  const int error = compass > CMP_BACK_DEG ? 360 - compass : compass;
   const int offset = min(MAX_OFFSET, P_GAIN * error);
   if (compass > CMP_TOL_DEG && compass <= CMP_BACK_DEG) {
     br += offset;
@@ -112,7 +112,7 @@ void Move(float spd, float dir) {
   fr = min(MAX_SPD, abs(fr));
   bl = min(MAX_SPD, abs(bl));
 
-  analogWrite(SPD_FL, fr);
+  analogWrite(SPD_FL, fl);
   analogWrite(SPD_BR, br);
   analogWrite(SPD_FR, fr);
   analogWrite(SPD_BL, bl);
