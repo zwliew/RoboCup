@@ -12,7 +12,6 @@
 #define ECHO_B 9
 #endif
 
-#define L_R_WIDTH 15
 #define CTR_READING 81
 #define NO_OBSTR_SUM 160
 
@@ -70,7 +69,7 @@ int CalcDistFromCenter(int right, int left) {
       distance = left - CTR_READING;
     }
   } else {
-    distance = left - right - L_R_WIDTH;
+    distance = (left - right) / 2;
   }
   return distance;
 }
