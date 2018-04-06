@@ -37,7 +37,11 @@
 #define CMP_TOL_DEG 5
 #define MAX_OFFSET 100
 
+static bool is_spinning;
+
 void InitLoc() {
+  is_spinning = false;
+
   pinMode(DIR_FL, OUTPUT);
   pinMode(DIR_FR, OUTPUT);
   pinMode(DIR_BL, OUTPUT);
@@ -49,6 +53,12 @@ void InitLoc() {
 // spd: 0f - 1f
 // clockwise: clockwise if true
 void Spin(float spd, bool clockwise) {
+  is_spinning = false;
+
+  if (spd == 0) {
+    return;
+  }
+
   if (clockwise) {
     digitalWrite(DIR_FL, LOW);
     digitalWrite(DIR_BL, LOW);
@@ -60,6 +70,9 @@ void Spin(float spd, bool clockwise) {
     digitalWrite(DIR_FR, HIGH);
     digitalWrite(DIR_BR, HIGH);
   }
+
+  is_spinning = true;
+
   analogWrite(SPD_FL, spd * 255);
   analogWrite(SPD_BR, spd * 255);
   analogWrite(SPD_FR, spd * 255);
@@ -69,6 +82,8 @@ void Spin(float spd, bool clockwise) {
 // spd: 0f - 1f
 // dir: 0 - 360 degrees
 void Move(float spd, float dir) {
+  is_spinning = false;
+
   if (spd == 0) {
     analogWrite(SPD_FL, 0);
     analogWrite(SPD_BR, 0);
@@ -95,11 +110,15 @@ void Move(float spd, float dir) {
     fl -= offset;
     bl -= offset;
     fr += offset;
+
+    is_spinning = true;
   } else if (compass < 360 - CMP_TOL_DEG && compass > CMP_BACK_DEG) {
     br -= offset;
     fl += offset;
     fr -= offset;
     bl += offset;
+
+    is_spinning = true;
   }
 
   // Directions
