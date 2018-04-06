@@ -16,7 +16,7 @@ void InitUS() {
  */
 int ReadPosition() {
   static int position = -1;
-  if (!is_spinning && Serial3.available()) {
+  if (Serial3.available()) {
     position = Serial3.read();
   }
 #ifdef DEBUG_US

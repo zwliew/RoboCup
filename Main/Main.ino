@@ -8,7 +8,6 @@
 //#define DEBUG_LOCOMOTION
 #define DEBUG_US
 //#define DEBUG_CAMERA
-#define DEBUG_MAIN
 
 // Flags to enable/disable manually
 //#define IS_STRIKER
@@ -36,11 +35,54 @@ void setup() {
   Serial.println("Main Setup complete.");
 }
 
+#ifdef IS_STRIKER
 void loop() {
-  int pos = ReadPosition();
-#ifdef DEBUG_MAIN
-  return;
-#endif
+  // Out detection
+  static bool was_front_out = false;
+  static bool was_back_out = false;
+  static bool was_right_out = false;
+  static bool was_left_out = false;
+  ReadLight();
+  if (IsRightOut() && !was_right_out) {
+    was_right_out = true;
+    Move(0.4, 270);
+    return;
+  } else if (IsRightOut() && was_right_out) {
+    was_right_out = false;
+  } else if (was_right_out) {
+    Move(0.4, 270);
+    return;
+  }
+  if (IsLeftOut() && !was_left_out) {
+    was_left_out = true;
+    Move(0.4, 90);
+    return;
+  } else if (IsLeftOut() && was_left_out) {
+    was_left_out = false;
+  } else if (was_left_out) {
+    Move(0.4, 90);
+    return;
+  }
+  if (IsFrontOut() && !was_front_out) {
+    was_front_out = true;
+    Move(0.4, 180);
+    return;
+  } else if (IsFrontOut() && was_front_out) {
+    was_front_out = false;
+  } else if (was_front_out) {
+    Move(0.4, 180);
+    return;
+  }
+  if (IsBackOut() && !was_back_out) {
+    was_back_out = true;
+    Move(0.4, 0);
+    return;
+  } else if (IsBackOut() && was_back_out) {
+    was_back_out = false;
+  } else if (was_back_out) {
+    Move(0.4, 0);
+    return;
+  }
 
   const int position = ReadPosition();
   // Ensure bot is within the field boundaries
@@ -53,9 +95,8 @@ void loop() {
     // Move according to ball position
   }
 
-#ifdef IS_STRIKER
   const int gate_reading = ReadGate();
-  if (IsBallInGate()) {
+  if (IsBallInGate(position)) {
     const int at_center = AtCenter(position);
     // Dribble, reposition, then shoot
     if (at_center == 1) {
@@ -66,7 +107,11 @@ void loop() {
       Shoot();
     }
   }
+
+}
 #else
+void loop() {
+  const int position = ReadPosition();
   // Ensure the bot is within the goal area
   const int within_goal_area = WithinGoalArea(position);
   if (within_goal_area == 1) {
@@ -76,5 +121,5 @@ void loop() {
   } else {
     // Move according to ball position
   }
-#endif
 }
+#endif

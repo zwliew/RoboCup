@@ -3,7 +3,7 @@
 #define BAUD_RATE 9600
 
 // Debug flags
-#define DEBUG_US
+//#define DEBUG_US
 
 // Flags to enable/disable manually
 //#define IS_STRIKER

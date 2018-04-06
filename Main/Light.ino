@@ -26,10 +26,10 @@
 #ifdef IS_STRIKER
 #define LI_THRES 50
 #else
-#define LI_THRES 160
+#define LI_THRES 110
 #endif
 
-int li_readings[13];
+static int li_readings[13];
 
 void InitLight() {
   for (int i = 0; i < 13; i++) {

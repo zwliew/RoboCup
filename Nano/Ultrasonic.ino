@@ -12,6 +12,10 @@
 #define ECHO_B 9
 #endif
 
+#define L_R_WIDTH 15
+#define CTR_READING 81
+#define NO_OBSTR_SUM 160
+
 void InitUS() {
   pinMode(TRIG_L, OUTPUT);
   pinMode(TRIG_R, OUTPUT);
@@ -59,14 +63,14 @@ int ReadRightUS() {
  */
 int CalcDistFromCenter(int right, int left) {
   int distance;
-  if (left + right < 160) {
+  if (left + right < NO_OBSTR_SUM) {
     if (right > left) {
-      distance = 81 - right;
+      distance = CTR_READING - right;
     } else {
-      distance = left - 81;
+      distance = left - CTR_READING;
     }
   } else {
-    distance = left - right;
+    distance = left - right - L_R_WIDTH;
   }
   return distance;
 }
