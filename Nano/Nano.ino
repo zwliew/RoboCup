@@ -19,6 +19,7 @@ void setup() {
 }
 
 void loop() {
+  // Send the position to the Mega via Serial
   const int position = CalcDistFromCenter();
-  Serial.write(position);
+  Serial.write(ReadLeftUS());
 }

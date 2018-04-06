@@ -29,7 +29,7 @@ int ReadLeftUS() {
 
   const int reading = pulseIn(ECHO_L, HIGH) * 0.034 / 2;
 #ifdef DEBUG_US
-  Serial.println("Left: " + ((String) reading));
+  Serial.print("Left: " + ((String) reading));
 #endif
   return reading;
 }
@@ -44,7 +44,7 @@ int ReadRightUS() {
 
   const int reading = pulseIn(ECHO_R, HIGH) * 0.034 / 2;
 #ifdef DEBUG_US
-  Serial.println("Right: " + ((String) reading));
+  Serial.println(" Right: " + ((String) reading));
 #endif
   return reading;
 }
