@@ -3,17 +3,17 @@ int cam_y;
 
 void InitCamera() {
   Serial3.begin(BAUD_RATE);
+
+  Serial.println("Initialized camera.");
 }
 
-void ReadCoordinates() {
-  if (Serial3.available() <= 0) {
-    return;
+int ReadBallPosition() {
+  static int angle = -1;
+  if (Serial3.available()) {
+    angle = Serial3.read();
   }
-
-  String coords[] = {};
-  coords[0] = Serial3.readStringUntil(':');
-  coords[1] = Serial3.readStringUntil(';');
-
-  cam_x = coords[0].toInt();
-  cam_y = coords[1].toInt();
+#ifdef DEBUG_CAMERA
+  Serial.println(angle);
+#endif
+  return angle;
 }

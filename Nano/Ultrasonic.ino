@@ -57,10 +57,7 @@ int ReadRightUS() {
  * The field should be 182cm in width. Since the bot is 20cm in diameter,
  * the balance reading should be 81cm on both sides.
  */
-int CalcDistFromCenter() {
-  int left = ReadLeftUS();
-  int right = ReadRightUS();
-
+int CalcDistFromCenter(int right, int left) {
   int distance;
   if (left + right < 160) {
     if (right > left) {

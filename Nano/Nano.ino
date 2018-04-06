@@ -2,8 +2,8 @@
 
 #define BAUD_RATE 9600
 
-// Debug
-//#define DEBUG_US
+// Debug flags
+#define DEBUG_US
 
 // Flags to enable/disable manually
 //#define IS_STRIKER
@@ -14,12 +14,12 @@ void setup() {
   Wire.begin();
 
   InitUS();
-
-  Serial.println("Nano setup complete.");
 }
 
 void loop() {
   // Send the position to the Mega via Serial
-  const int position = CalcDistFromCenter();
-  Serial.write(ReadLeftUS());
+  const int left = ReadLeftUS();
+  const int right = ReadRightUS();
+  const int position = CalcDistFromCenter(right, left);
+  Serial.write(position);
 }

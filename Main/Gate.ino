@@ -2,19 +2,14 @@
 
 #define GT_THRES_IN 20
 
-int gt_reading;
-
 void InitGate() {
-  gt_reading = 0;
-
   Serial.println("Initialized gate.");
 }
 
 int ReadGate() {
-  gt_reading = analogRead(GT);
-  return gt_reading;
+  return analogRead(GT);
 }
 
-bool IsBallInGate() {
-  return gt_reading < GT_THRES_IN;
+bool IsBallInGate(int reading) {
+  return reading < GT_THRES_IN;
 }
