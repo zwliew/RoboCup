@@ -29,6 +29,7 @@ void setup() {
   InitLight();
   InitSld();
   InitCmp();
+  InitDribbler();
   InitUS();
   InitCamera();
 
