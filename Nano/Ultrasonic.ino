@@ -1,3 +1,5 @@
+#include <NewPing.h>
+
 #ifdef IS_STRIKER
 #define TRIG_L 12
 #define ECHO_L 11
@@ -14,6 +16,10 @@
 
 #define CTR_READING 81
 #define NO_OBSTR_SUM 160
+#define MAX_DIST 200
+
+static NewPing.sonar_l(TRIG_L, ECHO_L, MAX_DIST);
+static NewPing.sonar_r(TRIG_R, ECHO_R, MAX_DIST);
 
 void InitUS() {
   pinMode(TRIG_L, OUTPUT);
@@ -23,14 +29,7 @@ void InitUS() {
 }
 
 int ReadLeftUS() {
-  digitalWrite(TRIG_L, LOW);
-  delayMicroseconds(2);
-
-  digitalWrite(TRIG_L, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_L, LOW);
-
-  const int reading = pulseIn(ECHO_L, HIGH) * 0.034 / 2;
+  const int reading = sonar_l.ping_cm();
 #ifdef DEBUG_US
   Serial.print("Left: " + ((String) reading));
 #endif
@@ -38,14 +37,7 @@ int ReadLeftUS() {
 }
 
 int ReadRightUS() {
-  digitalWrite(TRIG_R, LOW);
-  delayMicroseconds(2);
-
-  digitalWrite(TRIG_R, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_R, LOW);
-
-  const int reading = pulseIn(ECHO_R, HIGH) * 0.034 / 2;
+  const int reading = sonar_r.ping_cm();
 #ifdef DEBUG_US
   Serial.println(" Right: " + ((String) reading));
 #endif
