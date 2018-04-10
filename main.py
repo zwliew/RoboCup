@@ -7,6 +7,8 @@ import time
 import imutils
 import serial
 
+ARDUINO_CONNECTED = False
+
 class PiVideoStream:
     # Orange ball HSV values
     LOWER = (60, 50, 150)
@@ -58,10 +60,11 @@ class PiVideoStream:
         # indicate that the thread should be stopped
         self.stopped = True
 
-ser = serial.Serial(
-    port='/dev/serial0',
-    baudrate = 230400,
-)
+if ARDUINO_CONNECTED:
+    ser = serial.Serial(
+        port='/dev/serial0',
+        baudrate = 230400,
+    )
 
 stream = PiVideoStream().start()
 time.sleep(0.3)
@@ -87,8 +90,12 @@ while True:
             polarAngle = 90 - polarAngle
         polarAngle = str(polarAngle)
         polarAngle = polarAngle + (119 - len(polarAngle)) * "a" + "b"
-        ser.write(bytes(polarAngle, 'utf-8'))
+        if ARDUINO_CONNECTED:
+            ser.write(bytes(polarAngle, 'utf-8'))
+        else:
+            print(polarAngle)
     else:
-        ser.write(bytes((119 * "r" + "b"), 'utf-8'))
+        if ARDUINO_CONNECTED:
+            ser.write(bytes((119 * "r" + "b"), 'utf-8'))
 
 stream.stop()
