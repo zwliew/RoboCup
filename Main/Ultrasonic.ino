@@ -16,8 +16,10 @@ void InitUS() {
  */
 int ReadPosition() {
   static int position = -1;
-  if (Serial3.available()) {
-    position = Serial3.read();
+  if (Serial3.available() >= 2) {
+    const byte high = Serial3.read();
+    const byte low = Serial3.read();
+    position = high * 256 + low;
   }
 #ifdef DEBUG_US
   Serial.println(position);

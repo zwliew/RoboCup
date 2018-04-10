@@ -18,8 +18,9 @@ void setup() {
 
 void loop() {
   // Send the position to the Mega via Serial
-  const int left = ReadLeftUS();
-  const int right = ReadRightUS();
+  const unsigned int left = ReadLeftUS();
+  const unsigned int right = ReadRightUS();
   const int position = CalcDistFromCenter(right, left);
-  Serial.write(position);
+  Serial.write(position / 256);
+  Serial.write(position % 256);
 }
