@@ -18,8 +18,8 @@
 #define NO_OBSTR_SUM 160
 #define MAX_DIST 200
 
-static NewPing.sonar_l(TRIG_L, ECHO_L, MAX_DIST);
-static NewPing.sonar_r(TRIG_R, ECHO_R, MAX_DIST);
+static NewPing sonar_l(TRIG_L, ECHO_L, MAX_DIST);
+static NewPing sonar_r(TRIG_R, ECHO_R, MAX_DIST);
 
 void InitUS() {
   pinMode(TRIG_L, OUTPUT);
