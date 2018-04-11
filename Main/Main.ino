@@ -26,7 +26,6 @@ void setup() {
 
   InitGate();
   InitLoc();
-  InitLight();
   InitSld();
   InitCmp();
   InitDribbler();
@@ -39,49 +38,24 @@ void setup() {
 #ifdef IS_STRIKER
 void loop() {
   // Out detection
-  static bool was_front_out = false;
-  static bool was_back_out = false;
-  static bool was_right_out = false;
-  static bool was_left_out = false;
-  ReadLight();
-  if (IsRightOut() && !was_right_out) {
-    was_right_out = true;
-    Move(0.4, 270);
-    return;
-  } else if (IsRightOut() && was_right_out) {
-    was_right_out = false;
-  } else if (was_right_out) {
-    Move(0.4, 270);
-    return;
+  const bool out[4] = {
+    IsFrontOut(),
+    IsLeftOut(),
+    IsRightOut(),
+    IsBackOut()
+  };
+  int out_corr_dir = -1;
+  if (out[0]) {
+    out_corr_dir = 180;
+  } else if (out[1]) {
+    out_corr_dir = 90;
+  } else if (out[2]) {
+    out_corr_dir = 270;
+  } else if (out[3]) {
+    out_corr_dir = 0;
   }
-  if (IsLeftOut() && !was_left_out) {
-    was_left_out = true;
-    Move(0.4, 90);
-    return;
-  } else if (IsLeftOut() && was_left_out) {
-    was_left_out = false;
-  } else if (was_left_out) {
-    Move(0.4, 90);
-    return;
-  }
-  if (IsFrontOut() && !was_front_out) {
-    was_front_out = true;
-    Move(0.4, 180);
-    return;
-  } else if (IsFrontOut() && was_front_out) {
-    was_front_out = false;
-  } else if (was_front_out) {
-    Move(0.4, 180);
-    return;
-  }
-  if (IsBackOut() && !was_back_out) {
-    was_back_out = true;
-    Move(0.4, 0);
-    return;
-  } else if (IsBackOut() && was_back_out) {
-    was_back_out = false;
-  } else if (was_back_out) {
-    Move(0.4, 0);
+  if (out_corr_dir != -1) {
+    Move(0.4, out_corr_dir);
     return;
   }
 
@@ -122,5 +96,6 @@ void loop() {
   } else {
     // Move according to ball position
   }
+  Move(0, 0);
 }
 #endif
