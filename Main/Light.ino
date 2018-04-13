@@ -17,13 +17,59 @@
 #define LI_BF A2
 
 #ifdef IS_STRIKER
-#define LI_THRES 50
+#define LI_THRES_FLF 120 // 135
+#define LI_THRES_FRF 190 // 205
+#define LI_THRES_FLB 250 // 265
+#define LI_THRES_FRB 140 // 151
+#define LI_THRES_LL 160 // 175
+#define LI_THRES_LM 240 // 257
+#define LI_THRES_LR 140 // 153
+#define LI_THRES_RL 170 // 182
+#define LI_THRES_RM 150 //165
+#define LI_THRES_RR 190 // 206
+#define LI_THRES_BF 400 // 413
+#define LI_THRES_BM 230 // 249
+#define LI_THRES_BB 340 // 359
 #else
-#define LI_THRES 110
+// Need to find these out
+#define LI_THRES_FLF 120 // 135
+#define LI_THRES_FRF 190 // 205
+#define LI_THRES_FLB 250 // 265
+#define LI_THRES_FRB 140 // 151
+#define LI_THRES_LL 160 // 175
+#define LI_THRES_LM 240 // 257
+#define LI_THRES_LR 140 // 153
+#define LI_THRES_RL 170 // 182
+#define LI_THRES_RM 150 //165
+#define LI_THRES_RR 190 // 206
+#define LI_THRES_BF 400 // 413
+#define LI_THRES_BM 230 // 249
+#define LI_THRES_BB 340 // 359
 #endif
 
+#define LI_FRONT_NUM 4
+#define LI_LEFT_NUM 3
+#define LI_RIGHT_NUM 3
+#define LI_BACK_NUM 3
+
+const static int li_thres[LI_FRONT_NUM + LI_LEFT_NUM + LI_RIGHT_NUM + LI_BACK_NUM] = {
+  LI_THRES_FLF,
+  LI_THRES_FRF,
+  LI_THRES_FLB,
+  LI_THRES_FRB,
+  LI_THRES_LL,
+  LI_THRES_LM,
+  LI_THRES_LR,
+  LI_THRES_RL,
+  LI_THRES_RM,
+  LI_THRES_RR,
+  LI_THRES_BF,
+  LI_THRES_BM,
+  LI_THRES_BB
+};
+
 void DebugLight() {
-  unsigned int readings[13];
+  unsigned int readings[LI_FRONT_NUM + LI_LEFT_NUM + LI_RIGHT_NUM + LI_BACK_NUM];
   readings[0] = analogRead(LI_FLF);
   readings[1] = analogRead(LI_FRF);
   readings[2] = analogRead(LI_FLB);
@@ -62,13 +108,13 @@ bool IsFrontOut() {
   readings[2] = analogRead(LI_FLB);
   readings[3] = analogRead(LI_FRB);
 
-  for (unsigned int i = 0; i < 4; i++) {
-    if (readings[i] >= LI_THRES && !prev_out[i]
-        || readings[i] < LI_THRES && prev_out[i]) {
+  for (unsigned int i = 0; i < LI_FRONT_NUM; i++) {
+    if (readings[i] >= li_thres[i] && !prev_out[i]
+        || readings[i] < li_thres[i] && prev_out[i]) {
       prev_out[i] = !prev_out[i];
     }
   }
-  return prev_out[0] && prev_out[1] && prev_out[2] && prev_out[3];
+  return prev_out[0] || prev_out[1] || prev_out[2] || prev_out[3];
 }
 
 bool IsLeftOut() {
@@ -79,13 +125,13 @@ bool IsLeftOut() {
   readings[1] = analogRead(LI_LM);
   readings[2] = analogRead(LI_LR);
 
-  for (unsigned int i = 0; i < 3; i++) {
-    if (readings[i] >= LI_THRES && !prev_out[i]
-        || readings[i] < LI_THRES && prev_out[i]) {
+  for (unsigned int i = 0; i < LI_LEFT_NUM; i++) {
+    if (readings[i] >= li_thres[i + LI_FRONT_NUM] && !prev_out[i]
+        || readings[i] < li_thres[i + LI_FRONT_NUM] && prev_out[i]) {
       prev_out[i] = !prev_out[i];
     }
   }
-  return prev_out[0] && prev_out[1] && prev_out[2];
+  return prev_out[0] || prev_out[1] || prev_out[2];
 }
 
 bool IsRightOut() {
@@ -96,13 +142,13 @@ bool IsRightOut() {
   readings[1] = analogRead(LI_RM);
   readings[2] = analogRead(LI_RR);
 
-  for (unsigned int i = 0; i < 3; i++) {
-    if (readings[i] >= LI_THRES && !prev_out[i]
-        || readings[i] < LI_THRES && prev_out[i]) {
+  for (unsigned int i = 0; i < LI_RIGHT_NUM; i++) {
+    if (readings[i] >= li_thres[i + 7] && !prev_out[i]
+        || readings[i] < li_thres[i + 7] && prev_out[i]) {
       prev_out[i] = !prev_out[i];
     }
   }
-  return prev_out[0] && prev_out[1] && prev_out[2];
+  return prev_out[0] || prev_out[1] || prev_out[2];
 }
 
 bool IsBackOut() {
@@ -113,11 +159,11 @@ bool IsBackOut() {
   readings[1] = analogRead(LI_BM);
   readings[2] = analogRead(LI_BB);
 
-  for (unsigned int i = 0; i < 3; i++) {
-    if (readings[i] >= LI_THRES && !prev_out[i]
-        || readings[i] < LI_THRES && prev_out[i]) {
+  for (unsigned int i = 0; i < LI_BACK_NUM; i++) {
+    if (readings[i] >= li_thres[i + 10] && !prev_out[i]
+        || readings[i] < li_thres[i + 10] && prev_out[i]) {
       prev_out[i] = !prev_out[i];
     }
   }
-  return prev_out[0] && prev_out[1] && prev_out[2];
+  return prev_out[0] || prev_out[1] || prev_out[2];
 }

@@ -10,7 +10,7 @@
 //#define DEBUG_CAMERA
 
 // Flags to enable/disable manually
-//#define IS_STRIKER
+#define IS_STRIKER
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -36,6 +36,7 @@ void setup() {
 
 #ifdef IS_STRIKER
 void loop() {
+  DebugLight();
   // Out detection
   const bool out[4] = {
     IsFrontOut(),
@@ -54,19 +55,22 @@ void loop() {
     out_corr_dir = 0;
   }
   if (out_corr_dir != -1) {
-    Move(0.4, out_corr_dir);
+    Move(0.2, out_corr_dir);
     return;
   }
+  Move(0.2, 0);
+  return;
 
   const int position = ReadPosition();
   // Ensure bot is within the field boundaries
   const int within_field = WithinField(position);
   if (within_field == 1) {
-    Move(0.4, 270);
+    Move(0.2, 270);
   } else if (within_field == -1) {
-    Move(0.4, 90);
+    Move(0.2, 90);
   } else {
     // Move according to ball position
+    Move(0.2, 0);
   }
 
   const int gate_reading = ReadGate();
