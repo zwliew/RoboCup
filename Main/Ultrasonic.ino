@@ -5,21 +5,20 @@
 #define GOAL_AREA_EDGE_OFFSET 30 // todo: verify
 #endif
 
-void InitUS() {
-  Serial3.begin(BAUD_RATE);
-
-  Serial.println("Initialized ultrasonic.");
-}
+#define NANO_ADDR 0x01
 
 /**
  * The Arduino Nano sends the position of the bot to the Mega via Serial.
  */
 int ReadPosition() {
   static int position = -1;
-  if (Serial3.available() >= 2) {
-    const byte high = Serial3.read();
-    const byte low = Serial3.read();
-    position = high * 256 + low;
+  Wire.requestFrom(NANO_ADDR, 3);
+  const byte positive = Wire.read();
+  const byte high = Wire.read();
+  const byte low = Wire.read();
+  position = (high << 8) + low;
+  if (!positive) {
+    position = -position;
   }
 #ifdef DEBUG_US
   Serial.println(position);

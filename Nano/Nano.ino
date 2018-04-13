@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 #define BAUD_RATE 9600
+#define I2C_ADDR 0x01
 
 // Debug flags
 //#define DEBUG_US
@@ -8,19 +9,26 @@
 // Flags to enable/disable manually
 //#define IS_STRIKER
 
+static int distance = 0;
+
 void setup() {
   Serial.begin(BAUD_RATE);
 
-  Wire.begin();
-
   InitUS();
+
+  Wire.begin(I2C_ADDR);
+  Wire.onRequest(sendDistance);
 }
 
 void loop() {
-  // Send the position to the Mega via Serial
   const unsigned int left = ReadLeftUS();
   const unsigned int right = ReadRightUS();
-  const int position = CalcDistFromCenter(right, left);
-  Serial.write(position / 256);
-  Serial.write(position % 256);
+  distance = DistFromCenterH(left, right);
+}
+
+void sendDistance() {
+  Wire.write(distance > 0 ? 1 : 0);
+  const unsigned int dist_mag = abs(distance);
+  Wire.write(dist_mag >> 8);
+  Wire.write(dist_mag % 256);
 }
