@@ -1,18 +1,17 @@
 // LOW = anti-clockwise
 // HIGH = clockwise
-// except for BL
 #ifdef IS_STRIKER
 #define DIR_FL 45
 #define SPD_FL 8
 
-#define DIR_FR 47
-#define SPD_FR 10
+#define DIR_FR 51
+#define SPD_FR 11
 
 #define DIR_BL 49
 #define SPD_BL 9
 
-#define DIR_BR 51
-#define SPD_BR 11
+#define DIR_BR 47
+#define SPD_BR 10
 #else
 #define DIR_FL 51
 #define SPD_FL 10
@@ -38,11 +37,7 @@
 #define CMP_TOL_DEG 5
 #define MAX_OFFSET 100
 
-static bool is_spinning;
-
 void InitLoc() {
-  is_spinning = false;
-
   pinMode(DIR_FL, OUTPUT);
   pinMode(DIR_FR, OUTPUT);
   pinMode(DIR_BL, OUTPUT);
@@ -56,8 +51,6 @@ void InitLoc() {
 // spd: 0f - 1f
 // clockwise: clockwise if true
 void Spin(float spd, bool clockwise) {
-  is_spinning = false;
-
   if (spd == 0) {
     return;
   }
@@ -74,8 +67,6 @@ void Spin(float spd, bool clockwise) {
     digitalWrite(DIR_BR, HIGH);
   }
 
-  is_spinning = true;
-
   analogWrite(SPD_FL, spd * 255);
   analogWrite(SPD_BR, spd * 255);
   analogWrite(SPD_FR, spd * 255);
@@ -85,8 +76,6 @@ void Spin(float spd, bool clockwise) {
 // spd: 0f - 1f
 // dir: 0 - 360 degrees
 void Move(float spd, float dir) {
-  is_spinning = false;
-
   if (spd == 0) {
     analogWrite(SPD_FL, 0);
     analogWrite(SPD_BR, 0);
@@ -113,28 +102,24 @@ void Move(float spd, float dir) {
     fl -= offset;
     bl -= offset;
     fr += offset;
-
-    is_spinning = true;
   } else if (compass < 360 - CMP_TOL_DEG && compass > CMP_BACK_DEG) {
     br -= offset;
     fl += offset;
     fr -= offset;
     bl += offset;
-
-    is_spinning = true;
   }
 
   // Directions
-  digitalWrite(DIR_FL, fl > 0 ? LOW : HIGH);
+  digitalWrite(DIR_FL, fl > 0 ? HIGH : LOW);
   digitalWrite(DIR_BR, br > 0 ? HIGH : LOW);
   digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
-  digitalWrite(DIR_BL, bl > 0 ? HIGH : LOW);
+  digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
 
 #ifdef DEBUG_LOCOMOTION
-  Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " low" : " high"));
+  Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " high" : " low"));
   Serial.print(" fr: " + ((String) fr) + (fr > 0 ? " high" : " low"));
   Serial.print(" br: " + ((String) br) + (br > 0 ? " high" : " low"));
-  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " high" : " low"));
+  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " low" : " high"));
 #endif
 
   fl = min(MAX_SPD, abs(fl));

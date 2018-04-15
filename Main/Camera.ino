@@ -14,16 +14,21 @@ void InitCamera() {
 #endif
 }
 
-void ReadCamera() {
+unsigned int ReadCamera() {
   if (!Serial1.available()) {
-    return;
+    return angle;
   }
   String data = Serial1.readStringUntil(';');
   unsigned int comma_index = data.indexOf(',');
-  angle = data.substring(0, comma_index).toInt();
-  distance = data.substring(comma_index + 1).toInt();
-
+  unsigned int new_angle = data.substring(0, comma_index).toInt();
+  unsigned int new_distance = data.substring(comma_index + 1).toInt();
+  if (new_angle >= 0 && new_angle < 360
+      && new_distance > 0 && new_distance < 10) {
+    angle = new_angle;
+    distance = new_distance;
+  }
 #ifdef DEBUG_CAMERA
   Serial.println(((String) angle) + " " + ((String) distance));
 #endif
+  return angle;
 }
