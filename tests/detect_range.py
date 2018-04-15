@@ -13,7 +13,7 @@ import cv2
 import argparse
 import time
 from operator import xor
-
+import math
 
 def callback(value):
     pass
@@ -75,9 +75,10 @@ def main():
         else:
             frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     else:
-        camera = PiCamera()
-        camera.resolution = (640, 480)
-        camera.framerate = 32
+        camera = PiCamera(sensor_mode=4)
+        camera.resolution = (800, 608)
+        camera.shutter_speed = 26700
+        camera.hflip = True
         rawCapture = PiRGBArray(camera, size=camera.resolution)
 
         time.sleep(0.1)
@@ -95,9 +96,34 @@ def main():
         v1_min, v2_min, v3_min, v1_max, v2_max, v3_max = get_trackbar_values(range_filter)
 
         thresh = cv2.inRange(frame_to_thresh, (v1_min, v2_min, v3_min), (v1_max, v2_max, v3_max))
+        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        if len(cnts) > 0:
+            cnt = max(cnts, key=cv2.contourArea)
+            ((x, y), radius) = cv2.minEnclosingCircle(cnt)
+            cv2.circle(image, (int(x), int(y)), 10, (0, 255, 255), 2)
 
-        thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, None)
-        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, None)
+            x = int(x - 800 / 2 + 25)
+            y = int(608 / 2 - y + 25)
+            print(int(x), int(y), int(radius))
+
+        if x == 0 and y == 0:
+            angle = 0
+            distance = 0
+        else:
+            angle = math.atan2(y, x)
+            distance = int(math.hypot(x, y))
+            if angle < 0:
+                angle = -angle + math.pi / 2
+            elif angle < math.pi / 2:
+                angle = math.pi / 2 - angle
+            else:
+                angle = math.pi * 2 - (angle - math.pi / 2)
+            angle = int(math.degrees(angle))
+
+        print(angle, distance)
+
+        #thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, None)
+        #thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, None)
 
         if args['preview']:
             preview = cv2.bitwise_and(image, image, mask=thresh)
