@@ -48,7 +48,9 @@ void InitLoc() {
   pinMode(DIR_BL, OUTPUT);
   pinMode(DIR_BR, OUTPUT);
 
+#ifdef NO_DEBUG_OPT
   Serial.println("Initialized locomotion.");
+#endif
 }
 
 // spd: 0f - 1f

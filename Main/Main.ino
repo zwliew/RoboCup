@@ -8,6 +8,7 @@
 //#define DEBUG_LOCOMOTION
 //#define DEBUG_US
 //#define DEBUG_CAMERA
+#define NO_DEBUG_OPT
 
 // Flags to enable/disable manually
 #define IS_STRIKER
@@ -15,28 +16,33 @@
 void setup() {
   Serial.begin(BAUD_RATE);
 
+#ifdef NO_DEBUG_OPT
   Serial.print("Setting up Main for the ");
 #ifdef IS_STRIKER
   Serial.println("striker.");
 #else
   Serial.println("goalkeeper.");
 #endif
+#endif
 
   Wire.begin();
 
-  InitGate();
   InitLoc();
   InitSld();
   InitDribbler();
   InitCamera();
   InitCmp();
 
+#ifdef NO_DEBUG_OPT
   Serial.println("Main Setup complete.");
+#endif
 }
 
 #ifdef IS_STRIKER
 void loop() {
-  DebugLight();
+  ReadCamera();
+  return;
+
   // Out detection
   const bool out[4] = {
     IsFrontOut(),
@@ -58,8 +64,6 @@ void loop() {
     Move(0.2, out_corr_dir);
     return;
   }
-  Move(0.2, 0);
-  return;
 
   const int position = ReadPosition();
   // Ensure bot is within the field boundaries

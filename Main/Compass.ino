@@ -7,7 +7,9 @@ void InitCmp() {
   delay(2000); // The compass takes a while to set up
   cmp_offset = ReadCmp();
 
+#ifdef NO_DEBUG_OPT
   Serial.println("Initialized compass.");
+#endif
 }
 
 int ReadCmp() {

@@ -2,10 +2,6 @@
 
 #define GT_THRES_IN 20
 
-void InitGate() {
-  Serial.println("Initialized gate.");
-}
-
 int ReadGate() {
   return analogRead(GT);
 }
