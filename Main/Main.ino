@@ -62,7 +62,7 @@ void loop() {
     delay(350);
     return;
   }
-  Move(0.55, 0);
+  Move(0.55, ReadCamera());
   return;
 
   const int position = ReadPosition();
