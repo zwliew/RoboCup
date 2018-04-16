@@ -56,7 +56,7 @@ UPPER = (20, 255, 255)
 ARDUINO_CONNECTED = True
 
 if ARDUINO_CONNECTED:
-    s = serial.Serial("/dev/serial0", 112500)
+    s = serial.Serial("/dev/serial0", 230400)
 
 while True:
     bgr = vs.read()
