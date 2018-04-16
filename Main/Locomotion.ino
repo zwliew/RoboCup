@@ -1,14 +1,14 @@
 // LOW = anti-clockwise
 // HIGH = clockwise
 #ifdef IS_STRIKER
-#define DIR_FL 49
-#define SPD_FL 9
+#define DIR_FL 45
+#define SPD_FL 8
 
-#define DIR_FR 51
-#define SPD_FR 11
+#define DIR_FR 49
+#define SPD_FR 9
 
-#define DIR_BL 45
-#define SPD_BL 8
+#define DIR_BL 51
+#define SPD_BL 11
 
 #define DIR_BR 47
 #define SPD_BR 10
