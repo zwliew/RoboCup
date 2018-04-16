@@ -1,14 +1,14 @@
 // LOW = anti-clockwise
 // HIGH = clockwise
 #ifdef IS_STRIKER
-#define DIR_FL 45
-#define SPD_FL 8
+#define DIR_FL 49
+#define SPD_FL 9
 
 #define DIR_FR 51
 #define SPD_FR 11
 
-#define DIR_BL 49
-#define SPD_BL 9
+#define DIR_BL 45
+#define SPD_BL 8
 
 #define DIR_BR 47
 #define SPD_BR 10
@@ -110,10 +110,10 @@ void Move(float spd, float dir) {
   }
 
   // Directions
-  digitalWrite(DIR_FL, fl > 0 ? HIGH : LOW);
+  digitalWrite(DIR_FL, fl > 0 ? LOW : HIGH);
   digitalWrite(DIR_BR, br > 0 ? HIGH : LOW);
   digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
-  digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
+  digitalWrite(DIR_BL, bl > 0 ? HIGH : LOW);
 
 #ifdef DEBUG_LOCOMOTION
   Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " high" : " low"));

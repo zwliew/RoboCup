@@ -1,7 +1,5 @@
 #include <Wire.h>
 
-#define BAUD_RATE 9600
-
 // Debug flags
 //#define DEBUG_LIGHT
 //#define DEBUG_COMPASS
@@ -13,8 +11,14 @@
 // Flags to enable/disable manually
 #define IS_STRIKER
 
+#ifdef NO_DEBUG_OPT
+#define BAUD_RATE 115200
+#endif
+
 void setup() {
+#ifdef NO_DEBUG_OPT
   Serial.begin(BAUD_RATE);
+#endif
 
 #ifdef NO_DEBUG_OPT
   Serial.print("Setting up Main for the ");
@@ -62,7 +66,7 @@ void loop() {
     delay(350);
     return;
   }
-  Move(0.55, ReadCamera());
+  Move(0.5, 0);
   return;
 
   const int position = ReadPosition();
