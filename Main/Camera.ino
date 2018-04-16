@@ -1,7 +1,7 @@
 int cam_x;
 int cam_y;
 
-#define PI_BAUD_RATE 112500
+#define PI_BAUD_RATE 230400
 
 static unsigned int angle = 0;
 static unsigned int distance = 0;
