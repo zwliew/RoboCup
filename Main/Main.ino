@@ -66,22 +66,8 @@ void loop() {
     delay(350);
     return;
   }
-  Move(0.5, 0);
-  return;
 
-  const int position = ReadPosition();
-  // Ensure bot is within the field boundaries
-  const int within_field = WithinField(position);
-  if (within_field == 1) {
-    Move(0.6, 270);
-  } else if (within_field == -1) {
-    Move(0.6, 90);
-  } else {
-    // Move according to ball position
-    Move(0.55, 0);
-  }
-
-  const int gate_reading = ReadGate();
+  const unsigned int gate_reading = ReadGate();
   if (IsBallInGate(position)) {
     const int at_center = AtCenter(position);
     // Dribble, reposition, then shoot
@@ -93,7 +79,6 @@ void loop() {
       Shoot();
     }
   }
-
 }
 #else
 void loop() {
