@@ -68,7 +68,8 @@ void loop() {
   }
 
   const unsigned int gate_reading = ReadGate();
-  const int position = ReadPosition();
+  unsigned int back = 0;
+  const int position = ReadPosition(&back);
   if (IsBallInGate(position)) {
     const int at_center = AtCenter(position);
     // Dribble, reposition, then shoot
@@ -83,16 +84,9 @@ void loop() {
 }
 #else
 void loop() {
-  const int position = ReadPosition();
+  unsigned int back = 0;
+  const int position = ReadPosition(&back);
   // Ensure the bot is within the goal area
-  const int within_goal_area = WithinGoalArea(position);
-  if (within_goal_area == 1) {
-    Move(0.4, 270);
-  } else if (within_goal_area == -1) {
-    Move(0.4, 90);
-  } else {
-    // Move according to ball position
-  }
-  Move(0, 0);
+  const bool in_goal= WithinGoalArea(back);
 }
 #endif

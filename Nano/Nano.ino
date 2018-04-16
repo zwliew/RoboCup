@@ -10,6 +10,7 @@
 //#define IS_STRIKER
 
 static int distance = 0;
+static unsigned int back = 0;
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -24,6 +25,7 @@ void loop() {
   const unsigned int left = ReadLeftUS();
   const unsigned int right = ReadRightUS();
   distance = DistFromCenterH(left, right);
+  back = ReadBackUS();
 }
 
 void sendDistance() {
@@ -31,4 +33,6 @@ void sendDistance() {
   const unsigned int dist_mag = abs(distance);
   Wire.write(dist_mag >> 8);
   Wire.write(dist_mag % 256);
+  Wire.write(back >> 8);
+  Wire.write(back % 256);
 }

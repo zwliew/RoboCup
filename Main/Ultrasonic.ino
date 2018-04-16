@@ -10,16 +10,20 @@
 /**
  * The Arduino Nano sends the position of the bot to the Mega via Serial.
  */
-int ReadPosition() {
+int ReadPosition(unsigned int *back) {
   static int position = -1;
-  Wire.requestFrom(NANO_ADDR, 3);
+
+  Wire.requestFrom(NANO_ADDR, 5);
   const byte positive = Wire.read();
   const byte high = Wire.read();
   const byte low = Wire.read();
+  const byte back_high = Wire.read();
+  const byte back_low = Wire.read();
   position = (high << 8) + low;
   if (!positive) {
     position = -position;
   }
+  *back = (back_high << 8) + back_low;
 #ifdef DEBUG_US
   Serial.println(position);
 #endif
@@ -60,12 +64,7 @@ int WithinField(int position) {
  * 1 => bot is to the right of goal area (position > 0)
  * -1 => bot is to the left of goal area (position < 0)
  */
-int WithinGoalArea(int position) {
-  int ret = 0;
-  if (position >= 0 && position < GOAL_AREA_EDGE_OFFSET)
-    ret = 1;
-  else if (position < 0 && position > -GOAL_AREA_EDGE_OFFSET)
-    ret = -1;
-  return ret;
+bool WithinGoalArea(unsigned int back) {
+  return back < 20;
 }
 #endif
