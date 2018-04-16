@@ -68,6 +68,7 @@ void loop() {
   }
 
   const unsigned int gate_reading = ReadGate();
+  const int position = ReadPosition();
   if (IsBallInGate(position)) {
     const int at_center = AtCenter(position);
     // Dribble, reposition, then shoot
