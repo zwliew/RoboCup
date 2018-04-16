@@ -7,9 +7,22 @@ import imutils
 import serial
 import numpy
 
+# Pi Camera
 SENSOR_MODE = 4
 RESOLUTION = (800, 608)
+HALF_RES = (400, 304)
 SHUTTER_SPEED = 26700
+
+# Ball
+BALL_LOWER = (0, 110, 110)
+BALL_UPPER = (20, 255, 255)
+
+# Mathematical constants
+HALF_PI = math.pi / 2
+DOUBLE_PI = math.pi * 2
+
+# Debug
+ARDUINO_CONNECTED = True
 
 class PiVideoStream:
     def __init__(self):
@@ -45,55 +58,55 @@ class PiVideoStream:
                 self.camera.close()
                 return
 
-vs = PiVideoStream().start()
+def main():
+    vs = PiVideoStream().start()
 
-while vs.read() is None:
-    pass
+    while vs.read() is None:
+        pass
 
-LOWER = (0, 110, 110)
-UPPER = (20, 255, 255)
+    if ARDUINO_CONNECTED:
+        s = serial.Serial("/dev/serial0", 230400)
 
-ARDUINO_CONNECTED = True
+    while True:
+        bgr = vs.read()
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
 
-if ARDUINO_CONNECTED:
-    s = serial.Serial("/dev/serial0", 230400)
+        # Ball
+        mask = cv2.inRange(hsv, BALL_LOWER, BALL_UPPER)
+        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        if len(cnts) > 0:
+            cnt = max(cnts, key=cv2.contourArea)
+            ((x, y), radius) = cv2.minEnclosingCircle(cnt)
 
-while True:
-    bgr = vs.read()
-    hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, LOWER, UPPER)
-    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-    if len(cnts) > 0:
-        cnt = max(cnts, key=cv2.contourArea)
-        ((x, y), radius) = cv2.minEnclosingCircle(cnt)
+            x = int(x - HALF_RES[0] + 25)
+            y = int(HALF_RES[1] - y + 25)
+            if not ARDUINO_CONNECTED:
+                print(x, y, int(radius))
 
-        x = int(x - RESOLUTION[0] / 2 + 25)
-        y = int(RESOLUTION[1] / 2 - y + 25)
-        if not ARDUINO_CONNECTED:
-            print(x, y, int(radius))
-
-        if x == 0 and y == 0:
-            angle = 0
-            distance = 0
-        else:
-            angle = math.atan2(y, x)
-            distance = int(math.hypot(x, y) / RESOLUTION[1] * 12.7)
-            if angle < 0:
-                angle = -angle + math.pi / 2
-            elif angle < math.pi / 2:
-                angle = math.pi / 2 - angle
+            if x == 0 and y == 0:
+                angle = 0
+                distance = 0
             else:
-                angle = math.pi * 2 - (angle - math.pi / 2)
-            angle = int(math.degrees(angle))
+                angle = math.atan2(y, x)
+                distance = int(math.hypot(x, y) / RESOLUTION[1] * 12.7)
+                if angle < 0:
+                    angle = -angle + HALF_PI
+                elif angle < HALF_PI:
+                    angle = HALF_PI - angle
+                else:
+                    angle = DOUBLE_PI - (angle - HALF_PI)
+                angle = int(math.degrees(angle))
 
-        to_write = str(angle) + ',' + str(distance) + ';'
-        if ARDUINO_CONNECTED:
-            s.write(bytes(to_write, 'utf-8'))
-        else:
-            print(to_write)
-        
-    if not ARDUINO_CONNECTED:
-        print()
+            to_write = str(angle) + ',' + str(distance) + ';'
+            if ARDUINO_CONNECTED:
+                s.write(bytes(to_write, 'utf-8'))
+            else:
+                print(to_write)
 
-vs.stop()
-cv2.destroyAllWindows()
+        if not ARDUINO_CONNECTED:
+            print()
+
+    vs.stop()
+    cv2.destroyAllWindows()
+
+main()
