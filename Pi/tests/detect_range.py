@@ -15,6 +15,10 @@ import time
 from operator import xor
 import math
 
+# Coordinates
+X_OFFSET = 50
+Y_OFFSET = 15
+
 def callback(value):
     pass
 
@@ -102,8 +106,8 @@ def main():
             ((x, y), radius) = cv2.minEnclosingCircle(cnt)
             cv2.circle(image, (int(x), int(y)), 10, (0, 255, 255), 2)
 
-            x = int(x - 800 / 2 + 25)
-            y = int(608 / 2 - y + 25)
+            x = int(x - 800 / 2 + X_OFFSET)
+            y = int(608 / 2 - y + Y_OFFSET)
             print(int(x), int(y), int(radius))
 
         if x == 0 and y == 0:

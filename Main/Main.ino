@@ -1,5 +1,8 @@
 #include <Wire.h>
 
+#include "Angles.h"
+#include "Ultrasonic.h"
+
 // Debug flags
 //#define DEBUG_LIGHT
 //#define DEBUG_COMPASS
@@ -12,7 +15,7 @@
 #define IS_STRIKER
 
 #ifdef NO_DEBUG_OPT
-#define BAUD_RATE 115200
+#define BAUD_RATE 250000
 #endif
 
 void setup() {
@@ -42,51 +45,167 @@ void setup() {
 #endif
 }
 
+// Returns true if the loop should end early
+bool debugLoop() {
+  // Get ultrasonic distances
+  unsigned int front, left, right, back;
+  ReadUltrasonic(&front, &left, &right, &back);
+
+  // Ensure the bot is within the goal area
+  unsigned int proximity = 0;
+  const bool in_goal = WithinGoalArea(back);
+  if (!in_goal) {
+    if (right > left) {
+      proximity = FindEdgeProx(right);
+      Move(0.4, RIGHT_DEG, proximity);
+    } else {
+      proximity = FindEdgeProx(left);
+      Move(0.4, LEFT_DEG, proximity);
+    }
+    return true;
+  }
+
+  // Otherwise, track and follow the ball
+  unsigned int angle, distance;
+  TrackBall(&angle, &distance);
+  unsigned int quadrant = CalcQuadrant(angle);
+  switch (quadrant) {
+    case FIRST_QUAD:
+    case FOURTH_QUAD:
+      proximity = FindEdgeProx(right);
+      Move(0.4, RIGHT_DEG, proximity);
+      break;
+    case SECOND_QUAD:
+    case THIRD_QUAD:
+      proximity = FindEdgeProx(left);
+      Move(0.4, LEFT_DEG, proximity);
+      break;
+    default:
+      break;
+  }
+  return true;
+}
+
 #ifdef IS_STRIKER
 void loop() {
-  // Out detection
+  if (debugLoop()) {
+    return;
+  }
+
+  // Get ultrasonic distances
+  unsigned int front, left, right, back;
+  ReadUltrasonic(&front, &left, &right, &back);
+
+  // If we are out of the field,
+  // move in the other direction
+  unsigned int proximity = 0;
+  int out_corr_dir = -1;
   const bool out[4] = {
     IsFrontOut(),
     IsLeftOut(),
     IsRightOut(),
     IsBackOut()
   };
-  int out_corr_dir = -1;
   if (out[0]) {
-    out_corr_dir = 180;
+    out_corr_dir = BACK_DEG;
+    proximity = FindEdgeProx(front);
   } else if (out[1]) {
-    out_corr_dir = 90;
+    out_corr_dir = RIGHT_DEG;
+    proximity = FindEdgeProx(left);
   } else if (out[2]) {
-    out_corr_dir = 270;
+    out_corr_dir = LEFT_DEG;
+    proximity = FindEdgeProx(right);
   } else if (out[3]) {
-    out_corr_dir = 0;
+    out_corr_dir = FRONT_DEG;
+    proximity = FindEdgeProx(back);
   }
   if (out_corr_dir != -1) {
-    Move(0.6, out_corr_dir);
+    Move(0.6, out_corr_dir, proximity);
     delay(350);
     return;
   }
 
+  // If we are in possession of the ball,
+  // dribble, reposition and shoot
   const unsigned int gate_reading = ReadGate();
-  unsigned int back = 0;
-  const int position = ReadPosition(&back);
-  if (IsBallInGate(position)) {
-    const int at_center = AtCenter(position);
-    // Dribble, reposition, then shoot
-    if (at_center == 1) {
-      Move(0.4, 270);
-    } else if (at_center == -1) {
-      Move(0.4, 90);
-    } else {
-      Shoot();
+  if (IsBallInGate(gate_reading)) {
+    const int center_dev = AtHorizontalCenter(left, right);
+    switch (center_dev) {
+      case RIGHT:
+        proximity = FindEdgeProx(left);
+        Move(0.5, LEFT_DEG, proximity);
+        break;
+      case LEFT:
+        proximity = FindEdgeProx(right);
+        Move(0.5, RIGHT_DEG, proximity);
+        break;
+      default:
+        Shoot();
+        break;
     }
+    return;
   }
+
+  // Otherwise, track and follow the ball
+  unsigned int angle, distance;
+  TrackBall(&angle, &distance);
+  unsigned int quadrant = CalcQuadrant(angle);
+  switch (quadrant) {
+    case FIRST_QUAD:
+    case FOURTH_QUAD:
+      proximity = FindEdgeProx(right);
+      break;
+    case SECOND_QUAD:
+    case THIRD_QUAD:
+      proximity = FindEdgeProx(left);
+      break;
+    default:
+      proximity = FAR;
+      break;
+  }
+  Move(0.5, angle, proximity);
 }
 #else
 void loop() {
-  unsigned int back = 0;
-  const int position = ReadPosition(&back);
+  if (debugLoop()) {
+    return;
+  }
+
+  // Get ultrasonic distances
+  unsigned int front, left, right, back;
+  ReadUltrasonic(&front, &left, &right, &back);
+
   // Ensure the bot is within the goal area
-  const bool in_goal= WithinGoalArea(back);
+  unsigned int proximity = 0;
+  const bool in_goal = WithinGoalArea(back);
+  if (!in_goal) {
+    if (right > left) {
+      proximity = FindEdgeProx(right);
+      Move(0.4, RIGHT_DEG, proximity);
+    } else {
+      proximity = FindEdgeProx(left);
+      Move(0.4, LEFT_DEG, proximity);
+    }
+    return;
+  }
+
+  // Otherwise, track and follow the ball
+  unsigned int angle, distance;
+  TrackBall(&angle, &distance);
+  unsigned int quadrant = CalcQuadrant(angle);
+  switch (quadrant) {
+    case FIRST_QUAD:
+    case FOURTH_QUAD:
+      proximity = FindEdgeProx(right);
+      Move(0.4, RIGHT_DEG, proximity);
+      break;
+    case SECOND_QUAD:
+    case THIRD_QUAD:
+      proximity = FindEdgeProx(left);
+      Move(0.4, LEFT_DEG, proximity);
+      break;
+    default:
+      break;
+  }
 }
 #endif

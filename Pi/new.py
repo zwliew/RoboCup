@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from threading import Thread
@@ -6,6 +8,9 @@ import math
 import imutils
 import serial
 import numpy
+
+# Serial
+BAUD_RATE = 250000
 
 # Pi Camera
 SENSOR_MODE = 4
@@ -16,6 +21,10 @@ SHUTTER_SPEED = 26700
 # Ball
 BALL_LOWER = (0, 110, 110)
 BALL_UPPER = (20, 255, 255)
+
+# Coordinates
+X_OFFSET = 50
+Y_OFFSET = 15
 
 # Mathematical constants
 HALF_PI = math.pi / 2
@@ -65,7 +74,7 @@ def main():
         pass
 
     if ARDUINO_CONNECTED:
-        s = serial.Serial("/dev/serial0", 230400)
+        s = serial.Serial("/dev/serial0", BAUD_RATE)
 
     while True:
         bgr = vs.read()
@@ -78,8 +87,8 @@ def main():
             cnt = max(cnts, key=cv2.contourArea)
             ((x, y), radius) = cv2.minEnclosingCircle(cnt)
 
-            x = int(x - HALF_RES[0] + 25)
-            y = int(HALF_RES[1] - y + 25)
+            x = int(x - HALF_RES[0] + X_OFFSET)
+            y = int(HALF_RES[1] - y + Y_OFFSET)
             if not ARDUINO_CONNECTED:
                 print(x, y, int(radius))
 

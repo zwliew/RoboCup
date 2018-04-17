@@ -1,3 +1,5 @@
+#include "Ultrasonic.h"
+
 // LOW = anti-clockwise
 // HIGH = clockwise
 #ifdef IS_STRIKER
@@ -37,6 +39,10 @@
 #define CMP_TOL_DEG 5
 #define MAX_OFFSET 100
 
+#define PROX_FAR_RATIO 1
+#define PROX_OK_RATIO 0.9
+#define PROX_NEAR_RATIO 0.8
+
 void InitLoc() {
   pinMode(DIR_FL, OUTPUT);
   pinMode(DIR_FR, OUTPUT);
@@ -75,13 +81,28 @@ void Spin(float spd, bool clockwise) {
 
 // spd: 0f - 1f
 // dir: 0 - 360 degrees
-void Move(float spd, float dir) {
+void Move(float spd, float dir, unsigned int proximity) {
   if (spd == 0) {
     analogWrite(SPD_FL, 0);
     analogWrite(SPD_BR, 0);
     analogWrite(SPD_FR, 0);
     analogWrite(SPD_BL, 0);
     return;
+  }
+
+  // Reduce the speed based on how close the bot is
+  // to the edge in the direction it's travelling towards
+  switch (proximity) {
+    case NEAR:
+      spd *= PROX_NEAR_RATIO;
+      break;
+    case OK:
+      spd *= PROX_OK_RATIO;
+      break;
+    case FAR:
+    default:
+      spd *= PROX_FAR_RATIO;
+      break;
   }
 
   const float dir_rad = dir / PI_TO_DEG * PI;
@@ -110,16 +131,16 @@ void Move(float spd, float dir) {
   }
 
   // Directions
-  digitalWrite(DIR_FL, fl > 0 ? LOW : HIGH);
+  digitalWrite(DIR_FL, fl > 0 ? HIGH : LOW);
   digitalWrite(DIR_BR, br > 0 ? HIGH : LOW);
   digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
   digitalWrite(DIR_BL, bl > 0 ? HIGH : LOW);
 
 #ifdef DEBUG_LOCOMOTION
   Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " high" : " low"));
-  Serial.print(" fr: " + ((String) fr) + (fr > 0 ? " high" : " low"));
   Serial.print(" br: " + ((String) br) + (br > 0 ? " high" : " low"));
-  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " low" : " high"));
+  Serial.print(" fr: " + ((String) fr) + (fr > 0 ? " high" : " low"));
+  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " high" : " low"));
 #endif
 
   fl = min(MAX_SPD, abs(fl));

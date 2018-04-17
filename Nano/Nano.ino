@@ -1,19 +1,27 @@
 #include <Wire.h>
 
-#define BAUD_RATE 9600
 #define I2C_ADDR 0x01
 
 // Debug flags
 //#define DEBUG_US
+//#define NO_DEBUG_OPT
+
+#ifdef NO_DEBUG_OPT
+#define BAUD_RATE 250000
+#endif
 
 // Flags to enable/disable manually
-//#define IS_STRIKER
+#define IS_STRIKER
 
-static int distance = 0;
+static unsigned int front = 0;
 static unsigned int back = 0;
+static unsigned int left = 0;
+static unsigned int right = 0;
 
 void setup() {
+#ifdef NO_DEBUG_OPT
   Serial.begin(BAUD_RATE);
+#endif
 
   InitUS();
 
@@ -22,17 +30,19 @@ void setup() {
 }
 
 void loop() {
-  const unsigned int left = ReadLeftUS();
-  const unsigned int right = ReadRightUS();
-  distance = DistFromCenterH(left, right);
+  front = ReadFrontUS();
+  left = ReadLeftUS();
+  right = ReadRightUS();
   back = ReadBackUS();
 }
 
 void sendDistance() {
-  Wire.write(distance > 0 ? 1 : 0);
-  const unsigned int dist_mag = abs(distance);
-  Wire.write(dist_mag >> 8);
-  Wire.write(dist_mag % 256);
+  Wire.write(front >> 8);
+  Wire.write(front % 256);
+  Wire.write(left >> 8);
+  Wire.write(left % 256);
+  Wire.write(right >> 8);
+  Wire.write(right % 256);
   Wire.write(back >> 8);
   Wire.write(back % 256);
 }

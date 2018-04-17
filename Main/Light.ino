@@ -31,20 +31,19 @@
 #define LI_THRES_BM 230 // 249
 #define LI_THRES_BB 340 // 359
 #else
-// Need to find these out
-#define LI_THRES_FLF 120 // 135
-#define LI_THRES_FRF 190 // 205
-#define LI_THRES_FLB 250 // 265
-#define LI_THRES_FRB 140 // 151
-#define LI_THRES_LL 160 // 175
-#define LI_THRES_LM 240 // 257
-#define LI_THRES_LR 140 // 153
-#define LI_THRES_RL 170 // 182
-#define LI_THRES_RM 150 //165
-#define LI_THRES_RR 190 // 206
-#define LI_THRES_BF 400 // 413
-#define LI_THRES_BM 230 // 249
-#define LI_THRES_BB 340 // 359
+#define LI_THRES_FLF 130 // 149
+#define LI_THRES_FRF 180 // 190
+#define LI_THRES_FLB 190 // 205
+#define LI_THRES_FRB 120 // 135
+#define LI_THRES_LL 140 // 155
+#define LI_THRES_LM 180 // 195
+#define LI_THRES_LR 140 // 155
+#define LI_THRES_RL 180 // 193
+#define LI_THRES_RM 160 // 170
+#define LI_THRES_RR 170 // 183
+#define LI_THRES_BF 130 // 144
+#define LI_THRES_BM 190 // 203
+#define LI_THRES_BB 250 // 260
 #endif
 
 #define LI_FRONT_NUM 4

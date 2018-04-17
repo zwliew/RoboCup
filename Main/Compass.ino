@@ -1,7 +1,7 @@
 #define ADDR_CMPS11 0x60
 #define REG_ANGLE_16 2
 
-int cmp_offset = 0;
+static int cmp_offset = 0;
 
 void InitCmp() {
   delay(2000); // The compass takes a while to set up
