@@ -40,8 +40,8 @@
 #define MAX_OFFSET 100
 
 #define PROX_FAR_RATIO 1
-#define PROX_OK_RATIO 0.85
-#define PROX_NEAR_RATIO 0.7
+#define PROX_OK_RATIO 0.75
+#define PROX_NEAR_RATIO 0.5
 
 void InitLoc() {
   pinMode(DIR_FL, OUTPUT);
@@ -112,11 +112,25 @@ void Move(float spd, float dir, unsigned int proximity) {
   const float fl_br_frac = (cosine + sine) * spd / SQRT_2;
   const float fr_bl_frac = (cosine - sine) * spd / SQRT_2;
 
-  // Rotate to correct to 0 deg bearing
+  // Rotate to correct to 0 deg bearing.
   int fl, fr, br, bl;
   fl = br = fl_br_frac * MAX_SPD;
   fr = bl = fr_bl_frac * MAX_SPD;
-
+/*
+  const int error = dir > CMP_BACK_DEG ? 360 - dir : dir;
+  const int offset = min(MAX_OFFSET, P_GAIN * error);
+  if (dir > CMP_TOL_DEG && dir <= CMP_BACK_DEG) {
+    br -= offset;
+    fl += offset;
+    fr -= offset;
+    bl += offset;
+  } else if (dir < 360 - CMP_TOL_DEG && dir > CMP_BACK_DEG) {
+    br += offset;
+    fl -= offset;
+    bl -= offset;
+    fr += offset;
+  }
+*/
 #ifndef NO_COMPASS
   const int compass = ReadCmp();
   const int error = compass > CMP_BACK_DEG ? 360 - compass : compass;

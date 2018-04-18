@@ -1,4 +1,4 @@
-#define PI_BAUD_RATE 250000
+#define PI_BAUD_RATE 9600
 
 #define TOL_DEG 15
 

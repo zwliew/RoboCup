@@ -7,7 +7,7 @@
 //#define NO_DEBUG_OPT
 
 #ifdef NO_DEBUG_OPT
-#define BAUD_RATE 250000
+#define BAUD_RATE 9600
 #endif
 
 // Flags to enable/disable manually

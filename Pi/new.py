@@ -10,7 +10,7 @@ import serial
 import numpy
 
 # Serial
-BAUD_RATE = 250000
+BAUD_RATE = 9600
 
 # Pi Camera
 SENSOR_MODE = 4
@@ -20,7 +20,7 @@ SHUTTER_SPEED = 26700
 
 # Ball
 BALL_LOWER = (0, 110, 110)
-BALL_UPPER = (20, 255, 255)
+BALL_UPPER = (10, 255, 255)
 
 # Coordinates
 X_OFFSET = 25

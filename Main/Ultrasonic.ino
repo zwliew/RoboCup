@@ -10,7 +10,7 @@
 
 // Edge proximity
 #define EDGE_DIST_FAR 80
-#define EDGE_DIST_NEAR 40
+#define EDGE_DIST_NEAR 55
 
 // Center deviation
 #define CTR_READING 80
@@ -65,7 +65,7 @@ unsigned int FindEdgeProx(unsigned int distance) {
  * The field should be 182cm in width. Since the bot is 20cm in diameter,
  * the balance reading should be 81cm on both sides.
  */
-int DistFromCenterH(unsigned int left, unsigned int right) {
+int DistanceFromCenter(unsigned int left, unsigned int right) {
   int distance;
   if (left + right < NO_OBSTR_SUM) {
     if (right > left) {
@@ -88,7 +88,7 @@ int DistFromCenterH(unsigned int left, unsigned int right) {
  * -1 => bot is to the left of the center (position < 0)
  */
 int AtHorizontalCenter(unsigned int left, unsigned int right) {
-  const int position = DistFromCenterH(left, right);
+  const int position = DistanceFromCenter(left, right);
   int ret = ON;
   if (position > CTR_TOL)
     ret = RIGHT;

@@ -10,13 +10,13 @@
 //#define DEBUG_US
 //#define DEBUG_CAMERA
 #define NO_DEBUG_OPT
-#define NO_COMPASS
+//#define NO_COMPASS
 
 // Flags to enable/disable manually
 #define IS_STRIKER
 
 #ifdef NO_DEBUG_OPT
-#define BAUD_RATE 250000
+#define BAUD_RATE 9600
 #endif
 
 void setup() {
@@ -50,8 +50,11 @@ void setup() {
 
 // Returns true if the loop should end early
 bool debugLoop() {
+  unsigned int angle, distance;
+  TrackBall(&angle, &distance);
+  Move(0.3, angle, INVALID);
   return true;
-}
+}  
 
 #ifdef IS_STRIKER
 void loop() {
@@ -79,6 +82,24 @@ void loop() {
     IsRightOut(),
     IsBackOut()
   };
+/*
+  int out_corr_x = 0;
+  int out_corr_y = 0;
+  if (out[0]) {
+    out_corr_y = 1;
+  } else if (out[3]) {
+    out_corr_y = -1;
+  }
+  if (out[1]) {
+    out_corr_x = 1;
+  } else if (out[2]) {
+    out_corr_x = -1;
+  }
+  if (out_corr_x || out_corr_y) {
+    out_corr_dir = math.atan2(out_corr_y, out_corr_x);
+    
+  }
+*/
   if (out[0]) {
     out_corr_dir = BACK_DEG;
     proximity = FindEdgeProx(front);
@@ -93,27 +114,23 @@ void loop() {
     proximity = FindEdgeProx(back);
   }
   if (out_corr_dir != -1) {
-    Move(0.6, out_corr_dir, proximity);
-    delay(350);
+    Move(0.7, out_corr_dir, proximity);
+    delay(500);
     return;
   }
 
   // If we are in possession of the ball, reposition then shoot.
   if (IsBallInGate(gate_reading)) {
-    const int center_dev = AtHorizontalCenter(left, right);
-    switch (center_dev) {
-      case RIGHT:
-        proximity = FindEdgeProx(left);
-        Move(0.5, LEFT_DEG, proximity);
-        break;
-      case LEFT:
-        proximity = FindEdgeProx(right);
-        Move(0.5, RIGHT_DEG, proximity);
-        break;
-      default:
-        StopDribble();
-        Shoot();
-        break;
+    const int ctr_dist = DistanceFromCenter(left, right);
+    if (ctr_dist > 20) {
+      proximity = FindEdgeProx(left);
+      Move(0.5, LEFT_DEG, proximity);
+    } else if (ctr_dist < -20) {
+      proximity = FindEdgeProx(right);
+      Move(0.5, RIGHT_DEG, proximity);
+    } else {
+      StopDribble();
+      Shoot();
     }
     return;
   }

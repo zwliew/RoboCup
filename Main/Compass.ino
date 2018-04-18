@@ -25,7 +25,7 @@ int ReadCmp() {
   high = Wire.read();
   low = Wire.read();
 
-  int ret = (((high << 8) + low) / 10 - cmp_offset + 360) % 360;
+  const unsigned int ret = (360 - (((high << 8) + low) / 10) - cmp_offset + 360) % 360;
 #ifdef DEBUG_COMPASS
   Serial.print("Compass: ");
   Serial.println(ret);
