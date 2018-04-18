@@ -40,8 +40,8 @@
 #define MAX_OFFSET 100
 
 #define PROX_FAR_RATIO 1
-#define PROX_OK_RATIO 0.9
-#define PROX_NEAR_RATIO 0.8
+#define PROX_OK_RATIO 0.85
+#define PROX_NEAR_RATIO 0.7
 
 void InitLoc() {
   pinMode(DIR_FL, OUTPUT);
@@ -100,6 +100,7 @@ void Move(float spd, float dir, unsigned int proximity) {
       spd *= PROX_OK_RATIO;
       break;
     case FAR:
+    case INVALID:
     default:
       spd *= PROX_FAR_RATIO;
       break;
@@ -115,6 +116,8 @@ void Move(float spd, float dir, unsigned int proximity) {
   int fl, fr, br, bl;
   fl = br = fl_br_frac * MAX_SPD;
   fr = bl = fr_bl_frac * MAX_SPD;
+
+#ifndef NO_COMPASS
   const int compass = ReadCmp();
   const int error = compass > CMP_BACK_DEG ? 360 - compass : compass;
   const int offset = min(MAX_OFFSET, P_GAIN * error);
@@ -129,12 +132,13 @@ void Move(float spd, float dir, unsigned int proximity) {
     fr -= offset;
     bl += offset;
   }
+#endif
 
   // Directions
-  digitalWrite(DIR_FL, fl > 0 ? HIGH : LOW);
+  digitalWrite(DIR_FL, fl > 0 ? LOW : HIGH);
   digitalWrite(DIR_BR, br > 0 ? HIGH : LOW);
   digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
-  digitalWrite(DIR_BL, bl > 0 ? HIGH : LOW);
+  digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
 
 #ifdef DEBUG_LOCOMOTION
   Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " high" : " low"));

@@ -10,6 +10,7 @@
 //#define DEBUG_US
 //#define DEBUG_CAMERA
 #define NO_DEBUG_OPT
+#define NO_COMPASS
 
 // Flags to enable/disable manually
 #define IS_STRIKER
@@ -38,7 +39,9 @@ void setup() {
   InitSld();
   InitDribbler();
   InitCamera();
+#ifndef NO_COMPASS
   InitCmp();
+#endif
 
 #ifdef NO_DEBUG_OPT
   Serial.println("Main Setup complete.");
@@ -47,42 +50,6 @@ void setup() {
 
 // Returns true if the loop should end early
 bool debugLoop() {
-  // Get ultrasonic distances
-  unsigned int front, left, right, back;
-  ReadUltrasonic(&front, &left, &right, &back);
-
-  // Ensure the bot is within the goal area
-  unsigned int proximity = 0;
-  const bool in_goal = WithinGoalArea(back);
-  if (!in_goal) {
-    if (right > left) {
-      proximity = FindEdgeProx(right);
-      Move(0.4, RIGHT_DEG, proximity);
-    } else {
-      proximity = FindEdgeProx(left);
-      Move(0.4, LEFT_DEG, proximity);
-    }
-    return true;
-  }
-
-  // Otherwise, track and follow the ball
-  unsigned int angle, distance;
-  TrackBall(&angle, &distance);
-  unsigned int quadrant = CalcQuadrant(angle);
-  switch (quadrant) {
-    case FIRST_QUAD:
-    case FOURTH_QUAD:
-      proximity = FindEdgeProx(right);
-      Move(0.4, RIGHT_DEG, proximity);
-      break;
-    case SECOND_QUAD:
-    case THIRD_QUAD:
-      proximity = FindEdgeProx(left);
-      Move(0.4, LEFT_DEG, proximity);
-      break;
-    default:
-      break;
-  }
   return true;
 }
 

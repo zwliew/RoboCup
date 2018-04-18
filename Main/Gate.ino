@@ -2,7 +2,7 @@
 
 #define GT_THRES_IN 20
 
-int ReadGate() {
+unsigned int ReadGate() {
   return analogRead(GT);
 }
 

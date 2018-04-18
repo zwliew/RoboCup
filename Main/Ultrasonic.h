@@ -1,7 +1,8 @@
 // Edge proximity
-#define NEAR 0
-#define OK 1
-#define FAR 2
+#define INVALID 0
+#define NEAR 1
+#define OK 2
+#define FAR 3
 
 // Center deviation
 #define LEFT -1
