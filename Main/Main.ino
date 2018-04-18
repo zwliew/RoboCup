@@ -59,7 +59,13 @@ void loop() {
     return;
   }
 
-  // Get ultrasonic distances
+  // If we are in possession of the ball, dribble.
+  const unsigned int gate_reading = ReadGate();
+  if (IsBallInGate(gate_reading)) {
+    Dribble();
+  }
+
+  // Get ultrasonic distances.
   unsigned int front, left, right, back;
   ReadUltrasonic(&front, &left, &right, &back);
 
@@ -92,9 +98,7 @@ void loop() {
     return;
   }
 
-  // If we are in possession of the ball,
-  // dribble, reposition and shoot
-  const unsigned int gate_reading = ReadGate();
+  // If we are in possession of the ball, reposition then shoot.
   if (IsBallInGate(gate_reading)) {
     const int center_dev = AtHorizontalCenter(left, right);
     switch (center_dev) {
@@ -107,6 +111,7 @@ void loop() {
         Move(0.5, RIGHT_DEG, proximity);
         break;
       default:
+        StopDribble();
         Shoot();
         break;
     }
@@ -141,6 +146,12 @@ void loop() {
   // Get ultrasonic distances
   unsigned int front, left, right, back;
   ReadUltrasonic(&front, &left, &right, &back);
+
+  // If we are in possession of the ball, shoot.
+  const unsigned int gate_reading = ReadGate();
+  if (IsBallInGate(gate_reading)) {
+    Shoot();
+  }
 
   // Ensure the bot is within the goal area
   unsigned int proximity = 0;

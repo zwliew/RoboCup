@@ -3,6 +3,7 @@
 
 void InitDribbler() {
   pinMode(DIR_DRIB, OUTPUT);
+  digitalWrite(DIR_DRIB, LOW);
 
 #ifdef NO_DEBUG_OPT
   Serial.println("Initialized dribbler.");
@@ -10,7 +11,6 @@ void InitDribbler() {
 }
 
 void Dribble() {
-  digitalWrite(DIR_DRIB, LOW);
   analogWrite(SPD_DRIB, 200);
 }
 
