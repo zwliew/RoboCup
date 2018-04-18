@@ -16,8 +16,8 @@ from operator import xor
 import math
 
 # Coordinates
-X_OFFSET = 50
-Y_OFFSET = 15
+X_OFFSET = 25
+Y_OFFSET = 40
 
 def callback(value):
     pass

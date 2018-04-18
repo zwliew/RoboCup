@@ -23,8 +23,8 @@ BALL_LOWER = (0, 110, 110)
 BALL_UPPER = (20, 255, 255)
 
 # Coordinates
-X_OFFSET = 50
-Y_OFFSET = 15
+X_OFFSET = 25
+Y_OFFSET = 40
 
 # Mathematical constants
 HALF_PI = math.pi / 2
