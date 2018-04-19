@@ -29,9 +29,8 @@
 #endif
 
 // Math constants
-#define SQRT_2 1.41421356237
+#define SQRT_2 1.41421356237309504880
 #define MAX_SPD 255
-#define PI_TO_DEG 180
 
 // Tuning
 #define P_GAIN 0.8
@@ -106,7 +105,7 @@ void Move(float spd, float dir, unsigned int proximity) {
       break;
   }
 
-  const float dir_rad = dir / PI_TO_DEG * PI;
+  const float dir_rad = dir * DEG_TO_RAD;
   const float cosine = cos(dir_rad);
   const float sine = sin(dir_rad);
   const float fl_br_frac = (cosine + sine) * spd / SQRT_2;

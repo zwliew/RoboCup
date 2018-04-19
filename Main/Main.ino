@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <Math.h>
 
 #include "Angles.h"
 #include "Ultrasonic.h"
@@ -75,16 +76,15 @@ void loop() {
   // If we are out of the field,
   // move in the other direction
   unsigned int proximity = 0;
-  int out_corr_dir = -1;
+  int out_corr_x = 0;
+  int out_corr_y = 0;
+  float out_corr_dir = 0;
   const bool out[4] = {
     IsFrontOut(),
     IsLeftOut(),
     IsRightOut(),
     IsBackOut()
   };
-/*
-  int out_corr_x = 0;
-  int out_corr_y = 0;
   if (out[0]) {
     out_corr_y = 1;
   } else if (out[3]) {
@@ -96,24 +96,28 @@ void loop() {
     out_corr_x = -1;
   }
   if (out_corr_x || out_corr_y) {
-    out_corr_dir = math.atan2(out_corr_y, out_corr_x);
-    
-  }
-*/
-  if (out[0]) {
-    out_corr_dir = BACK_DEG;
-    proximity = FindEdgeProx(front);
-  } else if (out[1]) {
-    out_corr_dir = RIGHT_DEG;
-    proximity = FindEdgeProx(left);
-  } else if (out[2]) {
-    out_corr_dir = LEFT_DEG;
-    proximity = FindEdgeProx(right);
-  } else if (out[3]) {
-    out_corr_dir = FRONT_DEG;
-    proximity = FindEdgeProx(back);
-  }
-  if (out_corr_dir != -1) {
+    out_corr_dir = atan2(out_corr_y, out_corr_x);
+    if (out_corr_dir < 0) {
+      out_corr_dir = -out_corr_dir + HALF_PI;
+    } else if (out_corr_dir < HALF_PI) {
+      out_corr_dir = HALF_PI - out_corr_dir;
+    } else {
+      out_corr_dir = TWO_PI - (out_corr_dir - HALF_PI);
+    }
+    out_corr_dir *= RAD_TO_DEG;
+    switch (CalcQuadrant(int(out_corr_dir))) {
+      case FIRST_QUAD:
+      case FOURTH_QUAD:
+        proximity = FindEdgeProx(right);
+        break;
+      case SECOND_QUAD:
+      case THIRD_QUAD:
+        proximity = FindEdgeProx(left);
+        break;
+      default:
+        proximity = FAR;
+        break;
+    }
     Move(0.7, out_corr_dir, proximity);
     delay(500);
     return;

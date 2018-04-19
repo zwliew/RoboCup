@@ -37,12 +37,12 @@ void loop() {
 }
 
 void sendDistance() {
-  Wire.write(front >> 8);
-  Wire.write(front % 256);
-  Wire.write(left >> 8);
-  Wire.write(left % 256);
-  Wire.write(right >> 8);
-  Wire.write(right % 256);
-  Wire.write(back >> 8);
-  Wire.write(back % 256);
+  Wire.write(highByte(front));
+  Wire.write(lowByte(front));
+  Wire.write(highByte(left));
+  Wire.write(lowByte(left));
+  Wire.write(highByte(right));
+  Wire.write(lowByte(right));
+  Wire.write(highByte(back));
+  Wire.write(lowByte(back));
 }
