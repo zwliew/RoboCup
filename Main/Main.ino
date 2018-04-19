@@ -78,7 +78,6 @@ void loop() {
   unsigned int proximity = 0;
   int out_corr_x = 0;
   int out_corr_y = 0;
-  float out_corr_dir = 0;
   const bool out[4] = {
     IsFrontOut(),
     IsLeftOut(),
@@ -96,7 +95,7 @@ void loop() {
     out_corr_x = -1;
   }
   if (out_corr_x || out_corr_y) {
-    out_corr_dir = atan2(out_corr_y, out_corr_x);
+    float out_corr_dir = atan2(out_corr_y, out_corr_x);
     if (out_corr_dir < 0) {
       out_corr_dir = -out_corr_dir + HALF_PI;
     } else if (out_corr_dir < HALF_PI) {
@@ -127,13 +126,12 @@ void loop() {
   if (IsBallInGate(gate_reading)) {
     const int ctr_dist = DistanceFromCenter(left, right);
     if (ctr_dist > 20) {
-      proximity = FindEdgeProx(left);
-      Move(0.5, LEFT_DEG, proximity);
+      Move(0.5, LEFT_DEG, FindEdgeProx(left));
     } else if (ctr_dist < -20) {
-      proximity = FindEdgeProx(right);
-      Move(0.5, RIGHT_DEG, proximity);
+      Move(0.5, RIGHT_DEG, FindEdgeProx(right));
     } else {
       StopDribble();
+      Move(0.5, FRONT_DEG, FAR);
       Shoot();
     }
     return;
@@ -142,17 +140,25 @@ void loop() {
   // Otherwise, track and follow the ball
   unsigned int angle, distance;
   TrackBall(&angle, &distance);
-  unsigned int quadrant = CalcQuadrant(angle);
-  switch (quadrant) {
+  switch (CalcQuadrant(angle)) {
     case FIRST_QUAD:
+      angle = 70;
+      proximity = FindEdgeProx(right);
+      break;
     case FOURTH_QUAD:
+      angle = 160;
       proximity = FindEdgeProx(right);
       break;
     case SECOND_QUAD:
+      angle = 290;
+      proximity = FindEdgeProx(left);
+      break;
     case THIRD_QUAD:
+      angle = 200;
       proximity = FindEdgeProx(left);
       break;
     default:
+      angle = FRONT_DEG;
       proximity = FAR;
       break;
   }

@@ -80,7 +80,7 @@ void Spin(float spd, bool clockwise) {
 
 // spd: 0f - 1f
 // dir: 0 - 360 degrees
-void Move(float spd, float dir, unsigned int proximity) {
+void Move(float spd, unsigned int dir, unsigned int proximity) {
   if (spd == 0) {
     analogWrite(SPD_FL, 0);
     analogWrite(SPD_BR, 0);
