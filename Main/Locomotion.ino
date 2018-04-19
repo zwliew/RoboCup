@@ -2,7 +2,6 @@
 
 // LOW = anti-clockwise
 // HIGH = clockwise
-#ifdef IS_STRIKER
 #define DIR_FL 45
 #define SPD_FL 8
 
@@ -14,29 +13,16 @@
 
 #define DIR_BR 47
 #define SPD_BR 10
-#else
-#define DIR_FL 51
-#define SPD_FL 10
-
-#define DIR_FR 49
-#define SPD_FR 11
-
-#define DIR_BL 47
-#define SPD_BL 12
-
-#define DIR_BR 45
-#define SPD_BR 13
-#endif
 
 // Math constants
 #define SQRT_2 1.41421356237309504880
 #define MAX_SPD 255
 
 // Tuning
-#define P_GAIN 0.8
-#define CMP_BACK_DEG 160
+#define P_GAIN 0.4
 #define CMP_TOL_DEG 5
-#define MAX_OFFSET 100
+#define CMP_BACK_DEG 160
+#define MAX_OFFSET 70
 
 #define PROX_FAR_RATIO 1
 #define PROX_OK_RATIO 0.75
@@ -82,11 +68,10 @@ void Spin(float spd, bool clockwise) {
 // dir: 0 - 360 degrees
 void Move(float spd, unsigned int dir, unsigned int proximity) {
   if (spd == 0) {
-    analogWrite(SPD_FL, 0);
-    analogWrite(SPD_BR, 0);
-    analogWrite(SPD_FR, 0);
     analogWrite(SPD_BL, 0);
-    return;
+    analogWrite(SPD_FL, 0);
+    analogWrite(SPD_FR, 0);
+    analogWrite(SPD_BR, 0);
   }
 
   // Reduce the speed based on how close the bot is
@@ -131,9 +116,9 @@ void Move(float spd, unsigned int dir, unsigned int proximity) {
   }
 */
 #ifndef NO_COMPASS
-  const int compass = ReadCmp();
-  const int error = compass > CMP_BACK_DEG ? 360 - compass : compass;
-  const int offset = min(MAX_OFFSET, P_GAIN * error);
+  const unsigned int compass = ReadCmp();
+  const unsigned int error = compass > CMP_BACK_DEG ? 360 - compass : compass;
+  const unsigned int offset = min(MAX_OFFSET, P_GAIN * error);
   if (compass > CMP_TOL_DEG && compass <= CMP_BACK_DEG) {
     br += offset;
     fl -= offset;
@@ -142,8 +127,8 @@ void Move(float spd, unsigned int dir, unsigned int proximity) {
   } else if (compass < 360 - CMP_TOL_DEG && compass > CMP_BACK_DEG) {
     br -= offset;
     fl += offset;
-    fr -= offset;
     bl += offset;
+    fr -= offset;
   }
 #endif
 

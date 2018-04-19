@@ -10,7 +10,7 @@ import serial
 import numpy
 
 # Serial
-BAUD_RATE = 9600
+BAUD_RATE = 115200
 
 # Pi Camera
 SENSOR_MODE = 4

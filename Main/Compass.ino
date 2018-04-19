@@ -28,13 +28,13 @@ unsigned int ReadCmpRaw() {
   high = Wire.read();
   low = Wire.read();
 
-  return (720 - (((high << 8) + low) / 10) - cmp_offset) % 360;
+  return (360 + (((high << 8) + low) / 10) - cmp_offset) % 360;
 }
 
 // The motors will cause an offset of ~-20 degress.
 // Offset the compass reading to correct for this.
 unsigned int ReadCmp() {
-  unsigned int offsetted = ReadCmpRaw() + 20;
+  unsigned int offsetted = ReadCmpRaw();
   if (offsetted > 360) {
     offsetted = offsetted - 360;
   }
