@@ -5,6 +5,6 @@
 #define FAR 3
 
 // Center deviation
-#define LEFT -1
-#define ON 0
-#define RIGHT 1
+#define LEFT 0
+#define ON 1
+#define RIGHT 2

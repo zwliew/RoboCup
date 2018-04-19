@@ -1,9 +1,9 @@
 // Quadrants
-#define INVALID_QUAD -1
-#define FIRST_QUAD 0
-#define SECOND_QUAD 1
-#define THIRD_QUAD 2
-#define FOURTH_QUAD 3
+#define INVALID_QUAD 0
+#define FIRST_QUAD 1
+#define SECOND_QUAD 2
+#define THIRD_QUAD 3
+#define FOURTH_QUAD 4
 
 // Angles
 #define FRONT_DEG 0

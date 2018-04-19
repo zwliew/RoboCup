@@ -5,14 +5,17 @@ static int cmp_offset = 0;
 
 void InitCmp() {
   delay(2000); // The compass takes a while to set up
-  cmp_offset = ReadCmp();
+
+  // The board should always be switched on before the motors,
+  // so we should not offset the compass reading now.
+  cmp_offset = ReadCmpRaw();
 
 #ifdef NO_DEBUG_OPT
   Serial.println("Initialized compass.");
 #endif
 }
 
-int ReadCmp() {
+unsigned int ReadCmpRaw() {
   byte high;
   byte low;
 
@@ -25,12 +28,21 @@ int ReadCmp() {
   high = Wire.read();
   low = Wire.read();
 
-  const unsigned int ret = (360 - (((high << 8) + low) / 10) - cmp_offset + 360) % 360;
+  return (720 - (((high << 8) + low) / 10) - cmp_offset) % 360;
+}
+
+// The motors will cause an offset of ~-20 degress.
+// Offset the compass reading to correct for this.
+unsigned int ReadCmp() {
+  unsigned int offsetted = ReadCmpRaw() + 20;
+  if (offsetted > 360) {
+    offsetted = offsetted - 360;
+  }
 #ifdef DEBUG_COMPASS
   Serial.print("Compass: ");
-  Serial.println(ret);
+  Serial.println(offsetted);
 #endif
-  return ret;
+  return offsetted;
 }
 
 #ifdef DEBUG_COMPASS

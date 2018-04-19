@@ -36,8 +36,8 @@ void TrackBall(unsigned int *angle, unsigned int *distance) {
 #endif
 }
 
-int CalcQuadrant(unsigned int angle) {
-  int ret = INVALID_QUAD;
+unsigned int CalcQuadrant(unsigned int angle) {
+  unsigned int ret = INVALID_QUAD;
   if (angle >= FRONT_DEG + TOL_DEG && angle < RIGHT_DEG) {
     ret = FIRST_QUAD;
   } else if (angle >= RIGHT_DEG && angle < BACK_DEG) {

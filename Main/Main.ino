@@ -6,7 +6,7 @@
 
 // Debug flags
 //#define DEBUG_LIGHT
-//#define DEBUG_COMPASS
+#define DEBUG_COMPASS
 //#define DEBUG_LOCOMOTION
 //#define DEBUG_US
 //#define DEBUG_CAMERA

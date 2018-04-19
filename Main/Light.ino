@@ -51,7 +51,7 @@
 #define LI_RIGHT_NUM 3
 #define LI_BACK_NUM 3
 
-const static int li_thres[LI_FRONT_NUM + LI_LEFT_NUM + LI_RIGHT_NUM + LI_BACK_NUM] = {
+const static unsigned int li_thres[LI_FRONT_NUM + LI_LEFT_NUM + LI_RIGHT_NUM + LI_BACK_NUM] = {
   LI_THRES_FLF,
   LI_THRES_FRF,
   LI_THRES_FLB,

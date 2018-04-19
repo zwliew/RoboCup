@@ -82,14 +82,9 @@ int DistanceFromCenter(unsigned int left, unsigned int right) {
   return distance;
 }
 
-/**
- * 0 => bot is at center
- * 1 => bot is to the right of the center (position > 0)
- * -1 => bot is to the left of the center (position < 0)
- */
-int AtHorizontalCenter(unsigned int left, unsigned int right) {
+unsigned int AtHorizontalCenter(unsigned int left, unsigned int right) {
   const int position = DistanceFromCenter(left, right);
-  int ret = ON;
+  unsigned int ret = ON;
   if (position > CTR_TOL)
     ret = RIGHT;
   else if (position < -CTR_TOL)
@@ -97,13 +92,8 @@ int AtHorizontalCenter(unsigned int left, unsigned int right) {
   return ret;
 }
 
-/**
- * 0 => bot is within field
- * 1 => bot is to the right of field (position > 0)
- * -1 => bot is to the left of field (position < 0)
- */
-int WithinField(int position) {
-  int ret = ON;
+unsigned int WithinField(int position) {
+  unsigned int ret = ON;
   if (position >= 0 && position < FIELD_EDGE_OFFSET)
     ret = RIGHT;
   else if (position < 0 && position > -FIELD_EDGE_OFFSET)
