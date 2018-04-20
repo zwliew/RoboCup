@@ -47,7 +47,7 @@ void TrackBall(unsigned int *angle, float *distance) {
     *distance = new_distance;
     prev_angle = new_angle;
     prev_distance = new_distance;
-  } else if (new_angle == 999 && new_distance == 999) {
+  } else if (new_angle == NO_DEG && new_distance == NO_DEG) {
     *angle = new_angle;
     *distance = new_distance;
     prev_angle = new_angle;
