@@ -17,19 +17,19 @@
 #define LI_BF A2
 
 #ifdef IS_STRIKER
-#define LI_THRES_FLF 120 // 135
-#define LI_THRES_FRF 190 // 205
-#define LI_THRES_FLB 250 // 265
-#define LI_THRES_FRB 140 // 151
-#define LI_THRES_LL 160 // 175
-#define LI_THRES_LM 240 // 257
-#define LI_THRES_LR 140 // 153
-#define LI_THRES_RL 170 // 182
-#define LI_THRES_RM 150 //165
-#define LI_THRES_RR 190 // 206
-#define LI_THRES_BF 400 // 413
-#define LI_THRES_BM 230 // 249
-#define LI_THRES_BB 340 // 359
+#define LI_THRES_FLF 170 // 190
+#define LI_THRES_FRF 240 // 265
+#define LI_THRES_FLB 300 // 333
+#define LI_THRES_FRB 210 // 235
+#define LI_THRES_LL 200 // 225
+#define LI_THRES_LM 270 // 291
+#define LI_THRES_LR 140 // 166
+#define LI_THRES_RL 190 // 207
+#define LI_THRES_RM 170 // 197
+#define LI_THRES_RR 230 // 251
+#define LI_THRES_BF 310 // 330
+#define LI_THRES_BM 230 // 248
+#define LI_THRES_BB 270 // 292
 #else
 #define LI_THRES_FLF 130 // 149
 #define LI_THRES_FRF 180 // 190

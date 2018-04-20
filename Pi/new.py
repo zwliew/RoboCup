@@ -7,7 +7,7 @@ import cv2
 import math
 import imutils
 import serial
-import numpy
+import numpy as np
 
 # Serial
 BAUD_RATE = 115200
@@ -16,15 +16,25 @@ BAUD_RATE = 115200
 SENSOR_MODE = 4
 RESOLUTION = (800, 608)
 HALF_RES = (400, 304)
-SHUTTER_SPEED = 26700
+SHUTTER_SPEED = 22000
 
 # Ball
 BALL_LOWER = (0, 110, 110)
 BALL_UPPER = (10, 255, 255)
 
+orangeLowL = 140
+orangeLowA = 151 #161
+orangeLowB = 128
+orangeHighL = 211
+orangeHighA = 178
+orangeHighB = 167
+
+orangeLower =  np.array([orangeLowL, orangeLowA, orangeLowB])
+orangeUpper =  np.array([orangeHighL, orangeHighA, orangeHighB])
+
 # Coordinates
-X_OFFSET = 25
-Y_OFFSET = 40
+X_OFFSET = 65
+Y_OFFSET = 50
 
 # Mathematical constants
 HALF_PI = math.pi / 2
@@ -78,10 +88,10 @@ def main():
 
     while True:
         bgr = vs.read()
-        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+        lab = cv2.cvtColor(bgr, cv2.COLOR_BGR2Lab)
 
         # Ball
-        mask = cv2.inRange(hsv, BALL_LOWER, BALL_UPPER)
+        mask = cv2.inRange(lab, orangeLower, orangeUpper)
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         if len(cnts) > 0:
             cnt = max(cnts, key=cv2.contourArea)
@@ -97,7 +107,7 @@ def main():
                 distance = 0
             else:
                 angle = math.atan2(y, x)
-                distance = int(math.hypot(x, y) / RESOLUTION[1] * 12.7)
+                distance = math.hypot(x, y) / RESOLUTION[1] * 12.7
                 if angle < 0:
                     angle = -angle + HALF_PI
                 elif angle < HALF_PI:
@@ -106,15 +116,19 @@ def main():
                     angle = DOUBLE_PI - (angle - HALF_PI)
                 angle = int(math.degrees(angle))
 
-            to_write = str(angle) + ',' + str(distance) + ';'
+            to_write = str(angle) + ',' + format(distance, '.2f') + ';'
             if ARDUINO_CONNECTED:
                 s.write(bytes(to_write, 'utf-8'))
             else:
                 print(to_write)
+        else:
+            if ARDUINO_CONNECTED:
+                s.write(bytes('999,999;', 'utf-8'))
+            else:
+                print('999,999;')
 
         if not ARDUINO_CONNECTED:
             print()
-
     vs.stop()
     cv2.destroyAllWindows()
 

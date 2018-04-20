@@ -14,10 +14,21 @@ import argparse
 import time
 from operator import xor
 import math
+import numpy as np
 
 # Coordinates
-X_OFFSET = 25
-Y_OFFSET = 40
+X_OFFSET = 50
+Y_OFFSET = 45
+
+orangeLowL = 140
+orangeLowA = 161
+orangeLowB = 128
+orangeHighL = 211
+orangeHighA = 178
+orangeHighB = 167
+
+orangeLower =  np.array([orangeLowL, orangeLowA, orangeLowB])
+orangeUpper =  np.array([orangeHighL, orangeHighA, orangeHighB])
 
 def callback(value):
     pass
@@ -81,7 +92,9 @@ def main():
     else:
         camera = PiCamera(sensor_mode=4)
         camera.resolution = (800, 608)
-        camera.shutter_speed = 26700
+        camera.shutter_speed = 22000
+        #camera.contrast = 50
+        #camera.exposure_compensation = 6
         camera.hflip = True
         rawCapture = PiRGBArray(camera, size=camera.resolution)
 
@@ -95,7 +108,7 @@ def main():
         if range_filter == 'RGB':
             frame_to_thresh = image.copy()
         else:
-            frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+            frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2Lab)
 
         v1_min, v2_min, v3_min, v1_max, v2_max, v3_max = get_trackbar_values(range_filter)
 

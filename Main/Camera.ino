@@ -1,6 +1,6 @@
 #define PI_BAUD_RATE 115200
 
-#define TOL_DEG 15
+#define TOL_DEG 20
 
 void InitCamera() {
   Serial1.begin(PI_BAUD_RATE);
@@ -10,29 +10,51 @@ void InitCamera() {
 #endif
 }
 
-void TrackBall(unsigned int *angle, unsigned int *distance) {
-  static unsigned int prev_angle = 0;
-  static unsigned int prev_distance = 0;
+void TrackBall(unsigned int *angle, float *distance) {
+  static unsigned int prev_angle = NO_DEG;
+  static float prev_distance = NO_DEG;
+  static unsigned int no_deg_counter = 0;
+  static unsigned long first_no_deg_time = 0;
 
   if (!Serial1.available()) {
-    *angle = prev_angle;
-    *distance = prev_distance;
+#ifdef DEBUG_CAMERA
+    Serial.println("No camera reading.");
+#endif
+    const unsigned long cur_time = millis();
+    if (cur_time > first_no_deg_time + 1000) {
+      no_deg_counter = 1;
+      first_no_deg_time = cur_time;
+    } else {
+      no_deg_counter++;
+    }
+    if (no_deg_counter > 10) {
+      *angle = NO_DEG;
+      *distance = NO_DEG;
+    } else {
+      *angle = prev_angle;
+      *distance = prev_distance;
+    }
     return;
   }
 
   const String data = Serial1.readStringUntil(';');
   const unsigned int comma_index = data.indexOf(',');
   const unsigned int new_angle = data.substring(0, comma_index).toInt();
-  const unsigned int new_distance = data.substring(comma_index + 1).toInt();
+  const float new_distance = data.substring(comma_index + 1).toFloat();
   if (new_angle >= 0 && new_angle < 360
       && new_distance > 0 && new_distance < 8) {
     *angle = new_angle;
-    prev_angle = new_angle;
     *distance = new_distance;
+    prev_angle = new_angle;
+    prev_distance = new_distance;
+  } else if (new_angle == 999 && new_distance == 999) {
+    *angle = new_angle;
+    *distance = new_distance;
+    prev_angle = new_angle;
     prev_distance = new_distance;
   }
 #ifdef DEBUG_CAMERA
-  Serial.println("Angle: " + ((String) prev_angle) + " Distance: " + ((String) prev_distance));
+  Serial.println("Angle: " + ((String) *angle) + " Distance: " + ((String) *distance));
 #endif
 }
 

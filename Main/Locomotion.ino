@@ -20,7 +20,7 @@
 
 // Tuning
 #define P_GAIN 0.4
-#define CMP_TOL_DEG 5
+#define CMP_TOL_DEG 10
 #define CMP_BACK_DEG 160
 #define MAX_OFFSET 70
 
