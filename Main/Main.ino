@@ -140,7 +140,7 @@ void loop() {
   float distance;
   TrackBall(&angle, &distance);
   if (angle == NO_DEG && distance == NO_DEG) {
-    Move(0, FRONT_DEG, INVALID);
+    Move(0, NO_DEG, INVALID);
   } else {
     switch (CalcQuadrant(angle)) {
       case FIRST_QUAD:
@@ -263,7 +263,7 @@ void loop() {
         to_base_deg = RIGHT_DEG;
       }
     }
-    Move(to_base_deg == NO_DEG ? 0 : 0.4, to_base_deg, INVALID);
+    Move(0.4, to_base_deg, INVALID);
   } else {
     unsigned int quadrant = CalcQuadrant(angle);
     switch (quadrant) {
