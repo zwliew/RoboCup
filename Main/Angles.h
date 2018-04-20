@@ -10,4 +10,6 @@
 #define RIGHT_DEG 90
 #define BACK_DEG 180
 #define LEFT_DEG 270
+#define RIGHT_BACK_DEG 135
+#define LEFT_BACK_DEG 225
 #define NO_DEG 999

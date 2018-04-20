@@ -17,7 +17,9 @@
 #define NO_OBSTR_SUM 160
 
 // Goalie
-#define GOAL_BACK_DIST 30
+#define GOAL_BACK_DIST 20
+// Apparently, the goalie cannot merely move left/right within the goal area.
+#define GOALIE_AREA_BACK_DIST 90
 
 /**
  * The Arduino Nano sends the position of the bot to the Mega via Serial.
@@ -101,6 +103,10 @@ unsigned int WithinField(int position) {
   return ret;
 }
 
-bool WithinGoalArea(unsigned int back) {
+bool InGoal(unsigned int back) {
   return back < GOAL_BACK_DIST;
+}
+
+bool WithinGoalieArea(unsigned int back) {
+  return back < GOALIE_AREA_BACK_DIST;
 }
