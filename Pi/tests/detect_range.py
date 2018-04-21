@@ -17,8 +17,8 @@ import math
 import numpy as np
 
 # Coordinates
-X_OFFSET = 50
-Y_OFFSET = 45
+X_OFFSET = 55
+Y_OFFSET = 65
 
 orangeLowL = 140
 orangeLowA = 161
@@ -108,7 +108,7 @@ def main():
         if range_filter == 'RGB':
             frame_to_thresh = image.copy()
         else:
-            frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2Lab)
+            frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         v1_min, v2_min, v3_min, v1_max, v2_max, v3_max = get_trackbar_values(range_filter)
 

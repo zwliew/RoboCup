@@ -11,9 +11,9 @@
 #endif
 
 // Flags to enable/disable manually
-#define IS_STRIKER
+//#define IS_STRIKER
 
-static unsigned int front = 0;
+//static unsigned int front = 0;
 static unsigned int back = 0;
 static unsigned int left = 0;
 static unsigned int right = 0;
@@ -30,15 +30,15 @@ void setup() {
 }
 
 void loop() {
-  front = ReadFrontUS();
+  //front = ReadFrontUS();
   left = ReadLeftUS();
   right = ReadRightUS();
   back = ReadBackUS();
 }
 
 void sendDistance() {
-  Wire.write(highByte(front));
-  Wire.write(lowByte(front));
+  //Wire.write(highByte(front));
+  //Wire.write(lowByte(front));
   Wire.write(highByte(left));
   Wire.write(lowByte(left));
   Wire.write(highByte(right));

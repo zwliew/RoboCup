@@ -1,8 +1,4 @@
-#ifdef IS_STRIKER
 #define SLD 41
-#else
-#define SLD 50
-#endif
 
 void InitSld() {
   pinMode(SLD, OUTPUT);

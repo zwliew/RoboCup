@@ -20,10 +20,10 @@ SHUTTER_SPEED = 22000
 
 # Ball
 BALL_LOWER = (0, 110, 110)
-BALL_UPPER = (10, 255, 255)
+BALL_UPPER = (5, 255, 255)
 
 orangeLowL = 140
-orangeLowA = 151 #161
+orangeLowA = 161 #161 vs 151
 orangeLowB = 128
 orangeHighL = 211
 orangeHighA = 178
@@ -32,9 +32,19 @@ orangeHighB = 167
 orangeLower =  np.array([orangeLowL, orangeLowA, orangeLowB])
 orangeUpper =  np.array([orangeHighL, orangeHighA, orangeHighB])
 
+lowl = 90
+highl = 140
+lowa = 160
+higha = 190
+lowb = 145
+highb = 180
+
+lower = np.array([lowl, lowa, lowb])
+upper = np.array([highl, higha, highb])
+
 # Coordinates
-X_OFFSET = 65
-Y_OFFSET = 50
+X_OFFSET = 55
+Y_OFFSET = 65
 
 # Mathematical constants
 HALF_PI = math.pi / 2
@@ -88,10 +98,10 @@ def main():
 
     while True:
         bgr = vs.read()
-        lab = cv2.cvtColor(bgr, cv2.COLOR_BGR2Lab)
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2Lab)
 
         # Ball
-        mask = cv2.inRange(lab, orangeLower, orangeUpper)
+        mask = cv2.inRange(hsv, orangeLower, orangeUpper)
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         if len(cnts) > 0:
             cnt = max(cnts, key=cv2.contourArea)

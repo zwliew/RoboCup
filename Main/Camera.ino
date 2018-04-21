@@ -3,7 +3,11 @@
 #define TOL_DEG 20
 
 void InitCamera() {
+#ifdef IS_STRIKER
   Serial1.begin(PI_BAUD_RATE);
+#else
+  Serial3.begin(PI_BAUD_RATE);
+#endif
 
 #ifdef NO_DEBUG_OPT
   Serial.println("Initialized camera.");
@@ -16,7 +20,11 @@ void TrackBall(unsigned int *angle, float *distance) {
   static unsigned int no_deg_counter = 0;
   static unsigned long first_no_deg_time = 0;
 
+#ifdef IS_STRIKER
   if (!Serial1.available()) {
+#else
+  if (!Serial3.available()) {
+#endif
 #ifdef DEBUG_CAMERA
     Serial.println("No camera reading.");
 #endif
@@ -37,7 +45,11 @@ void TrackBall(unsigned int *angle, float *distance) {
     return;
   }
 
+#ifdef IS_STRIKER
   const String data = Serial1.readStringUntil(';');
+#else
+  const String data = Serial3.readStringUntil(';');
+#endif
   const unsigned int comma_index = data.indexOf(',');
   const unsigned int new_angle = data.substring(0, comma_index).toInt();
   const float new_distance = data.substring(comma_index + 1).toFloat();
@@ -66,7 +78,7 @@ unsigned int CalcQuadrant(unsigned int angle) {
     ret = FOURTH_QUAD;
   } else if (angle >= BACK_DEG && angle < LEFT_DEG) {
     ret = THIRD_QUAD;
-  } else if (angle < 360 - TOL_DEG) {
+  } else if (angle < 360 - TOL_DEG && angle > FRONT_DEG + TOL_DEG) {
     ret = SECOND_QUAD;
   }
   return ret;

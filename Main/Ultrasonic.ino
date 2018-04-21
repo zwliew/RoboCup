@@ -24,11 +24,11 @@
 /**
  * The Arduino Nano sends the position of the bot to the Mega via Serial.
  */
-void ReadUltrasonic(unsigned int *front, unsigned int *left,
+void ReadUltrasonic(unsigned int *left,
                     unsigned int *right, unsigned int *back) {
-  Wire.requestFrom(NANO_ADDR, 8);
-  const byte hi_f = Wire.read();
-  const byte lo_f = Wire.read();
+  Wire.requestFrom(NANO_ADDR, 6);
+  //const byte hi_f = Wire.read();
+  //const byte lo_f = Wire.read();
   const byte hi_l = Wire.read();
   const byte lo_l = Wire.read();
   const byte hi_r = Wire.read();
@@ -36,13 +36,13 @@ void ReadUltrasonic(unsigned int *front, unsigned int *left,
   const byte hi_b = Wire.read();
   const byte lo_b = Wire.read();
 
-  *front = (hi_f << 8) + lo_f;
+  //*front = (hi_f << 8) + lo_f;
   *left = (hi_l << 8) + lo_l;
   *right = (hi_r << 8) + lo_r;
   *back = (hi_b << 8) + lo_b;
 
 #ifdef DEBUG_US
-  Serial.println("Front: " + ((String) *front) +" Left: " + ((String) *left) +
+  Serial.println("Left: " + ((String) *left) +
                 " Right: " + ((String) *right) + " Back: " + ((String)* back));
 #endif
 }

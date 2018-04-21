@@ -2,6 +2,7 @@
 
 // LOW = anti-clockwise
 // HIGH = clockwise
+#ifdef IS_STRIKER
 #define DIR_FL 45
 #define SPD_FL 8
 
@@ -13,6 +14,19 @@
 
 #define DIR_BR 47
 #define SPD_BR 10
+#else
+#define DIR_FL 45
+#define SPD_FL 8
+
+#define DIR_FR 50
+#define SPD_FR 11
+
+#define DIR_BL 49
+#define SPD_BL 9
+
+#define DIR_BR 47
+#define SPD_BR 10
+#endif
 
 // Math constants
 #define SQRT_2 1.41421356237309504880
@@ -134,16 +148,16 @@ void Move(float spd, unsigned int dir, unsigned int proximity) {
 #endif
 
   // Directions
+  digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
   digitalWrite(DIR_FL, fl > 0 ? LOW : HIGH);
   digitalWrite(DIR_BR, br > 0 ? HIGH : LOW);
   digitalWrite(DIR_FR, fr > 0 ? HIGH : LOW);
-  digitalWrite(DIR_BL, bl > 0 ? LOW : HIGH);
 
 #ifdef DEBUG_LOCOMOTION
-  Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " high" : " low"));
+  Serial.print(" fl: " + ((String) fl) + (fl > 0 ? " low" : " high"));
   Serial.print(" br: " + ((String) br) + (br > 0 ? " high" : " low"));
   Serial.print(" fr: " + ((String) fr) + (fr > 0 ? " high" : " low"));
-  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " high" : " low"));
+  Serial.println(" bl: " + ((String) bl) + (bl > 0 ? " low" : " high"));
 #endif
 
   fl = min(MAX_SPD, abs(fl));

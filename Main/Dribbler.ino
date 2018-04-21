@@ -17,7 +17,7 @@ void InitDribbler() {
 }
 
 void Dribble() {
-  analogWrite(SPD_DRIB, 200);
+  analogWrite(SPD_DRIB, 100);
 }
 
 void StopDribble() {
