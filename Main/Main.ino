@@ -123,10 +123,11 @@ void loop() {
   // If we are in possession of the ball, reposition then shoot.
   if (IsBallInGate(gate_reading)) {
     const int ctr_dist = DistanceFromCenter(left, right);
+    const bool within_goalie_area = WithinGoalieArea(back);
     if (ctr_dist > 20) {
-      Move(0.4, LEFT_DEG, INVALID);
+      Move(0.4, within_goalie_area ? LEFT_FRONT_DEG : LEFT_DEG, INVALID);
     } else if (ctr_dist < -20) {
-      Move(0.4, RIGHT_DEG, INVALID);
+      Move(0.4, within_goalie_area ? RIGHT_FRONT_DEG : RIGHT_DEG, INVALID);
     } else {
       StopDribble();
       Move(0.4, FRONT_DEG, FAR);
@@ -230,9 +231,9 @@ void loop() {
     return;
   }
 
-  // Ensure the bot is within the goal area
-  const bool in_goal = WithinGoalieArea(back);
-  if (!in_goal) {
+  // Ensure the bot is within the goalie area
+  const bool within_goalie_area = WithinGoalieArea(back);
+  if (!within_goalie_area) {
     if (right > left) {
       //proximity = FindEdgeProx(right);
       Move(0.4, RIGHT_BACK_DEG, INVALID);
